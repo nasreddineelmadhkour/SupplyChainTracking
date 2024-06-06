@@ -25,4 +25,5 @@ public interface AccountIService {
 
     public boolean deleteDriver(Long idDriver);
 
-    }
+    Account updateProfile(Long idAccount, MultipartFile file, String name, String phoneNumber, String email, String password, String isEmail, String isPhone, String isPassword, String isPhoto, String isName) throws IOException;
+}

@@ -3,13 +3,10 @@ package com.pgsintl.supplychaintracking.Services;
 import com.pgsintl.supplychaintracking.Config.TwilioConfig;
 import com.pgsintl.supplychaintracking.Dto.AccountLoginDto;
 import com.pgsintl.supplychaintracking.Entities.Account;
-import com.pgsintl.supplychaintracking.Entities.Photo;
 import com.pgsintl.supplychaintracking.Entities.Role;
 import com.pgsintl.supplychaintracking.Repository.AccountRepository;
 import com.pgsintl.supplychaintracking.Repository.PhotoRepository;
 import com.pgsintl.supplychaintracking.Utils.ImageUtils;
-import com.twilio.Twilio;
-import jakarta.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -21,9 +18,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
-
-import com.twilio.rest.api.v2010.account.Message;
-import com.twilio.type.PhoneNumber;
 
 @Service @AllArgsConstructor
 public class AccountService implements AccountIService {
@@ -213,6 +207,41 @@ public class AccountService implements AccountIService {
             return false;
         }
 
+    }
+
+    @Override
+    public Account updateProfile(Long idAccount, MultipartFile file, String name, String phoneNumber, String email, String password, String isEmail, String isPhone, String isPassword, String isPhoto, String isName) throws IOException {
+
+        Account account = accountRepository.findById(idAccount).orElse(null);
+        if(account!=null){
+
+            if(isEmail.equals("true"))
+                account.setEmail(email);
+            if(isPassword.equals("true"))
+                account.setPassword(passwordEncoder.encode(password));
+            if(isPhone.equals("true"))
+                account.setPhoneNumber(phoneNumber);
+            if(isName.equals("true"))
+                account.setName(name);
+            if(isPhoto.equals("true")) {
+                account.setNamePhoto(file.getOriginalFilename());
+                account.setTypePhoto(file.getContentType());
+                account.setPhoto(ImageUtils.compressImage(file.getBytes()));
+            }
+
+
+
+
+
+            accountRepository.save(account);
+        }
+
+        Account accountReturn= accountRepository.findById(idAccount).orElse(null);
+
+        byte[] images= ImageUtils.decompressImage(accountReturn.getPhoto());
+
+        accountReturn.setPhoto(images);
+        return accountReturn;
     }
 
 

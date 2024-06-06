@@ -1,7 +1,9 @@
 package com.pgsintl.supplychaintracking.Services;
 
+import com.pgsintl.supplychaintracking.Dto.OrdersTrackingDto;
 import com.pgsintl.supplychaintracking.Entities.Account;
 import com.pgsintl.supplychaintracking.Entities.Orders;
+import com.pgsintl.supplychaintracking.Entities.StatusOrders;
 import com.pgsintl.supplychaintracking.Repository.AccountRepository;
 import com.pgsintl.supplychaintracking.Repository.OrdersRepository;
 import com.pgsintl.supplychaintracking.Repository.ReclamationRepository;
@@ -40,14 +42,29 @@ public class OrdersService implements OrdersIService {
 
     @Override
     public List<Orders> getAllOrderByCarrier(Long idCarrier) {
-        List<Orders> orders = new ArrayList<>();
-        Account account = accountRepository.findById(idCarrier).orElse(null);
-        if(account!=null){
-            orders.addAll(account.getOrdersCarrier());
+        List<Orders> ordersList = new ArrayList<>();
+        for (Orders orders1 : accountRepository.findById(idCarrier).get().getOrdersCarrier()) {
+            Calendar cal1 = Calendar.getInstance();
+            cal1.setTime(orders1.getDateOrders());
+            cal1.set(Calendar.HOUR_OF_DAY, 0);
+            cal1.set(Calendar.MINUTE, 0);
+            cal1.set(Calendar.SECOND, 0);
+            cal1.set(Calendar.MILLISECOND, 0);
+
+            Calendar cal2 = Calendar.getInstance();
+            cal2.setTime(new Date());
+            cal2.set(Calendar.HOUR_OF_DAY, 0);
+            cal2.set(Calendar.MINUTE, 0);
+            cal2.set(Calendar.SECOND, 0);
+            cal2.set(Calendar.MILLISECOND, 0);
+
+            if (!cal1.getTime().equals(cal2.getTime())){
+                ordersList.add(orders1);
+
+            }
         }
 
-        return orders;
-       // return accountRepository.findById(idCarrier).map(account -> account.getOrdersDriver().stream().toList()).orElse(null);
+        return ordersList;
     }
 
     @Override
@@ -84,7 +101,32 @@ public class OrdersService implements OrdersIService {
 
     @Override
     public List<Orders> getOrdersByDriver(Long idDriver) {
-        return ordersRepository.findAll().stream().filter(orders -> orders.getDriver().getUserNumber()==idDriver).toList();
+        List<Orders> ordersList = new ArrayList<>();
+
+
+        for (Orders orders1 : ordersRepository.findAll().stream().filter(orders -> orders.getDriver().getUserNumber()==idDriver).toList()) {
+            Calendar cal1 = Calendar.getInstance();
+            cal1.setTime(orders1.getDateOrders());
+            cal1.set(Calendar.HOUR_OF_DAY, 0);
+            cal1.set(Calendar.MINUTE, 0);
+            cal1.set(Calendar.SECOND, 0);
+            cal1.set(Calendar.MILLISECOND, 0);
+
+            Calendar cal2 = Calendar.getInstance();
+            cal2.setTime(new Date());
+            cal2.set(Calendar.HOUR_OF_DAY, 0);
+            cal2.set(Calendar.MINUTE, 0);
+            cal2.set(Calendar.SECOND, 0);
+            cal2.set(Calendar.MILLISECOND, 0);
+
+            if (!cal1.getTime().equals(cal2.getTime())){
+                ordersList.add(orders1);
+
+            }
+
+
+        }
+        return ordersList;
     }
 
     @Override
@@ -117,6 +159,27 @@ public class OrdersService implements OrdersIService {
 
 
         return ordersList ;
+    }
+
+    @Override
+    public void updatePosition( OrdersTrackingDto ordersTrackingDto) {
+        Orders orders = ordersRepository.findById(ordersTrackingDto.getIdOrders()).orElse(null);
+        if(orders!=null){
+            orders.setOrdersNowLat(ordersTrackingDto.getOrdersNowLat());
+            orders.setOrdersNowLong(ordersTrackingDto.getOrdersNowLong());
+            ordersRepository.save(orders);
+
+
+        }
+    }
+
+    @Override
+    public void startingOrders(Long idOrders) {
+        Orders orders = ordersRepository.findById(idOrders).orElse(null);
+        if(orders!=null){
+            orders.setStatus(StatusOrders.IN_PROGRESS);
+            ordersRepository.save(orders);
+        }
     }
 
 

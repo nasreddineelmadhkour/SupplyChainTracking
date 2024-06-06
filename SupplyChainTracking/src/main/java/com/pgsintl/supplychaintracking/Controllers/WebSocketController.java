@@ -1,6 +1,7 @@
 package com.pgsintl.supplychaintracking.Controllers;
 
 import com.pgsintl.supplychaintracking.Dto.ChatMessage;
+import com.pgsintl.supplychaintracking.Dto.OrdersTrackingDto;
 import com.pgsintl.supplychaintracking.Entities.Orders;
 import com.pgsintl.supplychaintracking.Entities.StatusOrders;
 import com.pgsintl.supplychaintracking.Repository.OrdersRepository;
@@ -21,7 +22,21 @@ public class WebSocketController {
     @Autowired
     OrdersRepository ordersRepository;
 
+    @MessageMapping("/getPosition/{roomId}")
+    @SendTo("/setPosition/{roomId}")
+    public OrdersTrackingDto TrackingOrders(@DestinationVariable String roomId, OrdersTrackingDto ordersTrackingDto) {
 
+        System.out.println("ID Order : "+ordersTrackingDto.getIdOrders()+"| ordersNowLat:" +ordersTrackingDto.getOrdersNowLat()+" | ordersNowLong:"+ordersTrackingDto.getOrdersNowLong());
+
+        ordersIService.updatePosition(ordersTrackingDto);
+
+        return  ordersTrackingDto;
+    }
+
+
+
+
+/*
     @MessageMapping("/chat/{roomId}")
     @SendTo("/topic/{roomId}")
     public ChatMessage chat(@DestinationVariable String roomId, ChatMessage message) {
@@ -29,9 +44,8 @@ public class WebSocketController {
         message.setDate(new Date());
         return new ChatMessage(message.getMessage(), message.getUser(),message.getDate());
     }
-
-
-
+*/
+/*
     @MessageMapping("/changeStatusOrder/{roomId}")
     @SendTo("/orderStatus/{roomId}")
     public Orders ChangeStatusOrder(@DestinationVariable String roomId, Long idOrder , StatusOrders statusOrders) {
@@ -44,10 +58,7 @@ public class WebSocketController {
         }
         return  null;
     }
-
-
-
-
+ */
 /*
     @MessageMapping("/chatbot/{roomId}")
     @SendTo("/topic/{roomId}")

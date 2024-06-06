@@ -61,5 +61,10 @@ public class OrdersController {
     }
 
 
+    @PostMapping("/startingOrders/{idOrders}")
+    @PreAuthorize("hasAuthority('DRIVER')")
+    public void startingOrders(@PathVariable Long idOrders){
+        ordersIService.startingOrders(idOrders);
+    }
 
 }

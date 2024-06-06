@@ -73,6 +73,27 @@ public class AccountController {
     }
 
 
+    @PostMapping("/updateProfile/{idAccount}")
+    public Account updateProfile(@PathVariable Long idAccount
+            ,@RequestParam("image") MultipartFile file
+            ,@RequestParam("name") String name
+            ,@RequestParam("phoneNumber") String phoneNumber
+            ,@RequestParam("email") String email
+            ,@RequestParam("password") String password
+            ,@RequestParam("isName") String isName
+            ,@RequestParam("isEmail") String isEmail
+            ,@RequestParam("isPhone") String isPhone
+            ,@RequestParam("isPassword") String isPassword
+            ,@RequestParam("isPhoto") String isPhoto
+
+
+    ) throws IOException{
+
+        return accountIService.updateProfile(idAccount,file,name,phoneNumber,email,password,isEmail,isPhone,isPassword,isPhoto,isName);
+
+    }
+
+
 
     @PostMapping("/deleteDriver/{idDriver}")
     @PreAuthorize("hasAuthority('CARRIER')")

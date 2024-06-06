@@ -50,6 +50,9 @@ public class Orders implements Serializable {
     double arrivalLong;
     double arrivalLat;
 
+    double ordersNowLat;
+    double ordersNowLong;
+
     String estimation;
     String distance;
 

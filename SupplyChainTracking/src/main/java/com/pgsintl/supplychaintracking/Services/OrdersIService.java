@@ -1,5 +1,6 @@
 package com.pgsintl.supplychaintracking.Services;
 
+import com.pgsintl.supplychaintracking.Dto.OrdersTrackingDto;
 import com.pgsintl.supplychaintracking.Entities.Orders;
 
 import java.util.List;
@@ -16,4 +17,9 @@ public interface OrdersIService {
     List<Orders> getOrdersByDriver(Long idDriver);
 
     List<Orders> getOrdersTodayBydriver(Long idDriver);
+
+    public void updatePosition(OrdersTrackingDto ordersTrackingDto);
+
+    public void startingOrders(Long idOrders);
+
 }
