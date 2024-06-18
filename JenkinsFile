@@ -1,5 +1,11 @@
 pipeline {
     agent any
+    
+    environment {
+        dockerUsername = 'nasreddine007'
+        dockerPassword = 'dckr_pat_7opngvYYdVx1b8MADBUpcxlxJHE'
+    }
+    
     stages {
         stage('Checkout') {
             steps {
@@ -43,5 +49,28 @@ pipeline {
                         }
                     }
         }
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    sh "docker  login -u $dockerUsername -p $dockerPassword"
+                    // Build the Docker image
+                    sh "docker build -t nasreddine007/supplychaintracking:2.2.0 ."
+                }
+            }
+        }
+
+        stage('Push Docker Image') {
+            steps {
+                script {
+
+                    // Tag and push the Docker image
+                    sh "docker push $dockerUsername/supplychaintracking:2.2.0 "
+
+                    // Logout from DockerHub
+                    sh "docker logout"
+                }
+            }
+        }
+        
     }
 }
