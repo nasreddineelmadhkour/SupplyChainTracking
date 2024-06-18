@@ -1,7 +1,12 @@
 package com.pgsintl.supplychaintracking;
 
+import com.pgsintl.supplychaintracking.Entities.Account;
+import com.pgsintl.supplychaintracking.Entities.Orders;
 import com.pgsintl.supplychaintracking.Entities.Reclamation;
+import com.pgsintl.supplychaintracking.Repository.AccountRepository;
+import com.pgsintl.supplychaintracking.Repository.OrdersRepository;
 import com.pgsintl.supplychaintracking.Repository.ReclamationRepository;
+import com.pgsintl.supplychaintracking.Services.OrdersService;
 import com.pgsintl.supplychaintracking.Services.ReclamationIService;
 import com.pgsintl.supplychaintracking.Services.ReclamationService;
 import org.junit.jupiter.api.BeforeEach;
@@ -9,36 +14,83 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
+@SpringBootTest
 class SupplyChainTrackingApplicationTests {
 
 
+
+    @Mock
+    private OrdersRepository ordersRepository;
+
     @Mock
     private ReclamationRepository reclamationRepository;
+
+    @Mock
+    private AccountRepository accountRepository;
+
     @InjectMocks
-    private ReclamationService reclamationService;
+    private OrdersService ordersService;
 
     @BeforeEach
-    void setup(){
-        MockitoAnnotations.openMocks(this);
+    public void setup() {
+        MockitoAnnotations.initMocks(this);
     }
+
+    // Tests for addOrder method
 
     @Test
-    void retrieveAllReclamations() {
-        List<Reclamation> expectedReclamations = new ArrayList<>();
+    public void testAddOrder() {
+        // Mock data
+        Orders orders = new Orders();
+        orders.setOrdersNumber(1L);
+        Long idCarrier = 1L;
+        Long idDriver = 2L;
+        Account mockCarrier = new Account();
+        mockCarrier.setUserNumber(idCarrier);
+        Account mockDriver = new Account();
+        mockDriver.setUserNumber(idDriver);
 
-        when(reclamationRepository.findAll()).thenReturn(expectedReclamations);
-        List<Reclamation> actualReclamations = reclamationService.getAll();
+        // Mock repository behavior
+        when(accountRepository.findById(idCarrier)).thenReturn(Optional.of(mockCarrier));
+        when(accountRepository.findById(idDriver)).thenReturn(Optional.of(mockDriver));
+        when(ordersRepository.save(any(Orders.class))).thenReturn(orders);
 
-        assertEquals(expectedReclamations, actualReclamations);
-        verify(reclamationRepository, times(1)).findAll();
+        // Perform service method
+        Orders result = ordersService.addOrder(new Orders(), idCarrier, idDriver);
+
+        // Verify interactions and assertions
+        verify(accountRepository, times(2)).findById(anyLong());
+        verify(ordersRepository, times(1)).save(any(Orders.class));
+        assertEquals(1L, result.getOrdersNumber());
     }
+
+    // Tests for getAllOrders method
+
+    @Test
+    public void testGetAllOrders() {
+        // Mock repository behavior
+        List<Orders> mockOrdersList = new ArrayList<>();
+        when(ordersRepository.findAll()).thenReturn(mockOrdersList);
+
+        // Perform service method
+        List<Orders> result = ordersService.getAllOrders();
+
+        // Verify interactions and assertions
+        verify(ordersRepository, times(1)).findAll();
+        assertEquals(mockOrdersList, result);
+    }
+
+    // Additional tests can be added for other methods similarly
+
 
 }

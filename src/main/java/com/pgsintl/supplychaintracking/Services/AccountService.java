@@ -5,7 +5,6 @@ import com.pgsintl.supplychaintracking.Dto.AccountLoginDto;
 import com.pgsintl.supplychaintracking.Entities.Account;
 import com.pgsintl.supplychaintracking.Entities.Role;
 import com.pgsintl.supplychaintracking.Repository.AccountRepository;
-import com.pgsintl.supplychaintracking.Repository.PhotoRepository;
 import com.pgsintl.supplychaintracking.Utils.ImageUtils;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,8 +21,7 @@ import java.util.Random;
 @Service @AllArgsConstructor
 public class AccountService implements AccountIService {
     AccountRepository accountRepository;
-    @Autowired
-    PhotoRepository photoRepository;
+
     @Autowired
     private PasswordEncoder passwordEncoder;
 
@@ -73,6 +71,7 @@ public class AccountService implements AccountIService {
 
         Account carrier = accountRepository.findById(idCarrier).orElse(null);
 
+        assert carrier != null;
         carrier.getDrivers().add(driver);
 
 
@@ -203,7 +202,7 @@ public class AccountService implements AccountIService {
             return true;
         }
         catch (Error e){
-            System.out.println(e);
+            System.out.println("Error :" +e);
             return false;
         }
 
@@ -238,6 +237,7 @@ public class AccountService implements AccountIService {
 
         Account accountReturn= accountRepository.findById(idAccount).orElse(null);
 
+        assert accountReturn != null;
         byte[] images= ImageUtils.decompressImage(accountReturn.getPhoto());
 
         accountReturn.setPhoto(images);

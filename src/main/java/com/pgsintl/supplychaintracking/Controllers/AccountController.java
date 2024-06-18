@@ -5,7 +5,6 @@ import com.pgsintl.supplychaintracking.Entities.Account;
 import com.pgsintl.supplychaintracking.Entities.AuthRequest;
 import com.pgsintl.supplychaintracking.Services.AccountIService;
 import com.pgsintl.supplychaintracking.Services.AccountSecurityService;
-import com.pgsintl.supplychaintracking.Services.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -25,9 +24,6 @@ public class AccountController {
 
     @Autowired
     private AuthenticationManager authenticationManager;
-    @Autowired
-    private JwtService jwtService;
-
     @Autowired
     private AccountIService accountIService;
 
@@ -101,13 +97,6 @@ public class AccountController {
         return accountIService.deleteDriver(idDriver);
     }
 
-
-/*
-    @GetMapping("/getAll")
-    public byte[] getAll(){
-        return accountIService.getAllUser();
-    }
-*/
 
     @GetMapping("/driversByCarrier/{idCarrier}")
     //@PreAuthorize("hasAuthority('CARRIER') and hasAuthority('OTHER_AUTHORITY') and hasAuthority('ANOTHER_AUTHORITY')")
