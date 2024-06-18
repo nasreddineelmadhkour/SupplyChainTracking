@@ -13,29 +13,36 @@ pipeline {
                 sh 'mvn clean compile'
             }
         }
+        stage('Build') {
+                    steps {
+                        script {
+                                sh 'mvn clean install -DskipTests'
+                        }
+                    }
+        }
+        stage('Sonar-Analysis') {
+                    steps {
+                        script {
+                                sh "mvn clean verify sonar:sonar \
+                                -Dsonar.projectKey=SupplyChainTracking \
+                                -Dsonar.projectName='SupplyChainTracking' \
+                                -Dsonar.host.url=http://172.17.20.244:9000 \
+                                -Dsonar.token=sqp_d335aedf256e888c9c9decf16073ad8d0eaf5625 \
+                                -DskipTests"
+                        }
+                    }
+        }
         stage('Junit & Mock') {
             steps {
                 sh 'mvn test'
             }
         }
-        stage('Build') {
-            steps {
-                script {
-                        sh 'mvn clean install -DskipTests'
-                }
-            }
-        }
-        stage('Sonar-Analysis') {
-            steps {
-                script {
-                        sh "mvn clean verify sonar:sonar \
-                        -Dsonar.projectKey=SupplyChainTracking \
-                        -Dsonar.projectName='SupplyChainTracking' \
-                        -Dsonar.host.url=http://172.17.20.244:9000 \
-                        -Dsonar.token=sqp_d335aedf256e888c9c9decf16073ad8d0eaf5625 \
-                        -DskipTests"
-                }
-            }
+        stage('Deploy to Nexus') {
+                    steps {
+                        script {
+                            sh 'mvn deploy -DskipTests'
+                        }
+                    }
         }
     }
 }
