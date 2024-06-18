@@ -27,8 +27,7 @@ pipeline {
                                 -Dsonar.projectKey=SupplyChainTracking \
                                 -Dsonar.projectName='SupplyChainTracking' \
                                 -Dsonar.host.url=http://172.17.20.244:9000 \
-                                -Dsonar.token=sqp_d335aedf256e888c9c9decf16073ad8d0eaf5625 \
-                                -DskipTests"
+                                -Dsonar.token=sqp_d335aedf256e888c9c9decf16073ad8d0eaf5625 \"
                         }
                     }
         }
