@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  app:
+    image: pgs
+    container_name: SupplyChainTracking
+    depends_on:
+      - sqlserver
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:sqlserver://sqlserver:1433;databaseName=pgsDB;encrypt=true;trustServerCertificate=true
+      SPRING_DATASOURCE_DRIVERCLASSNAME: com.microsoft.sqlserver.jdbc.SQLServerDriver
+      SPRING_DATASOURCE_USERNAME: sa
+      SPRING_DATASOURCE_PASSWORD: MyPgsDb123
+      SPRING_JPA_HIBERNATE_DIALECT: org.hibernate.dialect.SQLServerDialect
+      SPRING_JPA_SHOW_SQL: "true"
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SERVER_PORT: 8085
+      SERVER_ADDRESS: 0.0.0.0
+      TWILIO_ACCOUNT_SID: ACa4a43badb4ea62bd6a9173ce6ad36543
+      TWILIO_AUTH_TOKEN: d466cbf27bf02624d8e0994705a8c85d
+      TWILIO_TRIAL_NUMBER: +14845467140
+    ports:
+      - "8085:8085"
+    volumes:
+      - .:/app
+    working_dir: /app
+    command: ["./mvnw", "spring-boot:run"]
+
+
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    container_name: sqlserver
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=MyPgsDb123
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserver-data:/var/opt/mssql
+volumes:
+  sqlserver-data:
