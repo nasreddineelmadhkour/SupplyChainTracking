@@ -6,8 +6,10 @@ import com.pgsintl.supplychaintracking.Repository.OrdersRepository;
 import com.pgsintl.supplychaintracking.Repository.ReclamationRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
-public class ReclamationServiceIService implements ReclamationIService {
+public class ReclamationService implements ReclamationIService {
 
     OrdersRepository ordersRepository;
     ReclamationRepository reclamationRepository;
@@ -24,4 +26,9 @@ public class ReclamationServiceIService implements ReclamationIService {
         return orders.getReclamation();
     }
 
+
+    @Override
+    public List<Reclamation> getAll(){
+        return reclamationRepository.findAll();
+    }
 }
