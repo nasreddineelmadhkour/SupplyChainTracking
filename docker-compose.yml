@@ -7,7 +7,7 @@ services:
     depends_on:
       - sqlserver
     environment:
-      SPRING_DATASOURCE_URL: jdbc:sqlserver://localhost:1433;databaseName=pgsDB;encrypt=true;trustServerCertificate=true
+      SPRING_DATASOURCE_URL: jdbc:sqlserver://sqlserver:1433;databaseName=pgsDB;encrypt=true;trustServerCertificate=true
       SPRING_DATASOURCE_DRIVERCLASSNAME: com.microsoft.sqlserver.jdbc.SQLServerDriver
       SPRING_DATASOURCE_USERNAME: sa
       SPRING_DATASOURCE_PASSWORD: MyPgsDb123
