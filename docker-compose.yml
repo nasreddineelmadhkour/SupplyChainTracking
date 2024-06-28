@@ -7,7 +7,7 @@ services:
     depends_on:
       - sqlserver
     environment:
-      SPRING_DATASOURCE_URL: jdbc:sqlserver://;serverName=sqlserver:1433;databaseName=pgsDB;encrypt=true;trustServerCertificate=true;
+      SPRING_DATASOURCE_URL: jdbc:sqlserver://sqlserver:1433;databaseName=pgsDB;encrypt=true;trustServerCertificate=true;
       SPRING_DATASOURCE_DRIVERCLASSNAME: com.microsoft.sqlserver.jdbc.SQLServerDriver
       SPRING_DATASOURCE_USERNAME: sa
       SPRING_DATASOURCE_PASSWORD: MyPgsDb123
@@ -26,16 +26,23 @@ services:
     working_dir: /app
     command: ["./mvnw", "spring-boot:run"]
 
-
   sqlserver:
     image: mcr.microsoft.com/mssql/server:2019-latest
     container_name: sqlserver
     environment:
       - ACCEPT_EULA=Y
       - SA_PASSWORD=MyPgsDb123
+      - MSSQL_PID=Express
     ports:
       - "1433:1433"
     volumes:
       - sqlserver-data:/var/opt/mssql
+    command:
+      - /bin/bash
+      - -c
+      - |
+        /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P MyPgsDb123 -Q "CREATE DATABASE pgsDB"
+        /opt/mssql/bin/sqlservr
+
 volumes:
   sqlserver-data:
