@@ -2,12 +2,15 @@ version: '3.8'
 
 services:
   app:
+    build:
+      context: .
+      dockerfile: Dockerfile  # Specify the Dockerfile location relative to the docker-compose.yml file
     image: pgs
     container_name: SupplyChainTracking
     depends_on:
-      - sqlserver
+      - sqlserver2  # Make sure your app service depends on sqlserver2
     environment:
-      SPRING_DATASOURCE_URL: jdbc:sqlserver://sqlserver:1433;databaseName=pgsDB;encrypt=true;trustServerCertificate=true;
+      SPRING_DATASOURCE_URL: jdbc:sqlserver://sqlserver2:1434;databaseName=pgsDB;encrypt=true;trustServerCertificate=true;
       SPRING_DATASOURCE_DRIVERCLASSNAME: com.microsoft.sqlserver.jdbc.SQLServerDriver
       SPRING_DATASOURCE_USERNAME: sa
       SPRING_DATASOURCE_PASSWORD: MyPgsDb123
@@ -26,15 +29,15 @@ services:
     working_dir: /app
     command: ["./mvnw", "spring-boot:run"]
 
-  sqlserver:
+  sqlserver2:
     image: mcr.microsoft.com/mssql/server:2019-latest
-    container_name: sqlserver
+    container_name: sqlserver2  # Name your new SQL Server container differently
     environment:
       - ACCEPT_EULA=Y
       - SA_PASSWORD=MyPgsDb123
       - MSSQL_PID=Express
     ports:
-      - "1433:1433"
+      - "1434:1433"  # Map container's port 1433 to host's port 1434
     volumes:
       - sqlserver-data:/var/opt/mssql
     command:
