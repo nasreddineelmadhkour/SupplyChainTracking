@@ -2,42 +2,28 @@ version: '3.8'
 
 services:
   app:
-    build:
-      context: .
-      dockerfile: Dockerfile  # Specify the Dockerfile location relative to the docker-compose.yml file
-    image: pgs
+    image: supplychaintracking:2.6.0
     container_name: SupplyChainTracking
-    depends_on:
-      - sqlserver2  # Make sure your app service depends on sqlserver2
     environment:
-      SPRING_DATASOURCE_URL: jdbc:sqlserver://sqlserver2:1434;databaseName=pgsDB;encrypt=true;trustServerCertificate=true;
-      SPRING_DATASOURCE_DRIVERCLASSNAME: com.microsoft.sqlserver.jdbc.SQLServerDriver
-      SPRING_DATASOURCE_USERNAME: sa
-      SPRING_DATASOURCE_PASSWORD: MyPgsDb123
-      SPRING_JPA_HIBERNATE_DIALECT: org.hibernate.dialect.SQLServerDialect
-      SPRING_JPA_SHOW_SQL: "true"
-      SPRING_JPA_HIBERNATE_DDL_AUTO: update
-      SERVER_PORT: 8085
-      SERVER_ADDRESS: 0.0.0.0
-      TWILIO_ACCOUNT_SID: ACa4a43badb4ea62bd6a9173ce6ad36543
-      TWILIO_AUTH_TOKEN: d466cbf27bf02624d8e0994705a8c85d
-      TWILIO_TRIAL_NUMBER: +14845467140
+      - NEXUS_URL=http://172.17.20.244:8081/repository/maven-releases/com/pgsintl/SupplyChainTracking/2.6/SupplyChainTracking-2.6.jar
     ports:
       - "8085:8085"
+    command: ["java", "-jar", "/SupplyChainTracking-2.6.jar"]
+    depends_on:
+      - sqlserver
     volumes:
       - .:/app
     working_dir: /app
-    command: ["./mvnw", "spring-boot:run"]
 
-  sqlserver2:
+  sqlserver:
     image: mcr.microsoft.com/mssql/server:2019-latest
-    container_name: sqlserver2  # Name your new SQL Server container differently
+    container_name: sqlserver
     environment:
       - ACCEPT_EULA=Y
       - SA_PASSWORD=MyPgsDb123
       - MSSQL_PID=Express
     ports:
-      - "1434:1433"  # Map container's port 1433 to host's port 1434
+      - "1434:1433"
     volumes:
       - sqlserver-data:/var/opt/mssql
     command:
