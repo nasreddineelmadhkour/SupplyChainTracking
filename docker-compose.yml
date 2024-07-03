@@ -2,13 +2,13 @@ version: '3.8'
 
 services:
   app:
-    image: nasreddine007/supplychaintracking:2.7.0
+    image: nasreddine007/supplychaintracking:2.8.0
     container_name: SupplyChainTracking
     environment:
-      - NEXUS_URL=http://172.17.20.244:8081/repository/maven-releases/com/pgsintl/SupplyChainTracking/2.7/SupplyChainTracking-2.7.jar
+      - NEXUS_URL=http://172.17.20.244:8081/repository/maven-releases/com/pgsintl/SupplyChainTracking/2.8/SupplyChainTracking-2.8.jar
     ports:
       - "8085:8085"
-    command: ["java", "-jar", "/SupplyChainTracking-2.7.jar"]
+    command: ["java", "-jar", "/SupplyChainTracking-2.8.jar"]
     depends_on:
       - sqlserver
     volumes:
