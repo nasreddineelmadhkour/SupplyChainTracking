@@ -5,7 +5,7 @@ services:
     image: nasreddine007/supplychaintracking:2.7.0
     container_name: SupplyChainTracking
     environment:
-      - NEXUS_URL=http://172.17.20.244:8081/repository/maven-releases/com/pgsintl/SupplyChainTracking/2.6/SupplyChainTracking-2.7.jar
+      - NEXUS_URL=http://172.17.20.244:8081/repository/maven-releases/com/pgsintl/SupplyChainTracking/2.7/SupplyChainTracking-2.7.jar
     ports:
       - "8085:8085"
     command: ["java", "-jar", "/SupplyChainTracking-2.7.jar"]
