@@ -2,22 +2,22 @@ version: '3.8'
 
 services:
   app:
-    image: nasreddine007/supplychaintracking:2.8.0
+    image: nasreddine007/supplychaintracking:2.9.0
     container_name: SupplyChainTracking
     environment:
-      - NEXUS_URL=http://172.17.20.244:8081/repository/maven-releases/com/pgsintl/SupplyChainTracking/2.8/SupplyChainTracking-2.8.jar
+      - NEXUS_URL=http://172.17.20.244:8081/repository/maven-releases/com/pgsintl/SupplyChainTracking/2.9/SupplyChainTracking-2.9.jar
     ports:
       - "8085:8085"
-    command: ["java", "-jar", "/SupplyChainTracking-2.8.jar"]
+    command: ["java", "-jar", "/SupplyChainTracking-2.9.jar"]
     depends_on:
-      - sqlserver
+      - sqlserver2
     volumes:
       - .:/app
     working_dir: /app
 
-  sqlserver:
+  sqlserver2:
     image: mcr.microsoft.com/mssql/server:2019-latest
-    container_name: sqlserver
+    container_name: sqlserver2
     environment:
       - ACCEPT_EULA=Y
       - SA_PASSWORD=MyPgsDb123
@@ -25,7 +25,7 @@ services:
     ports:
       - "1434:1433"
     volumes:
-      - sqlserver-data:/var/opt/mssql
+      - sqlserver2-data:/var/opt/mssql
     command:
       - /bin/bash
       - -c
@@ -34,4 +34,4 @@ services:
         /opt/mssql/bin/sqlservr
 
 volumes:
-  sqlserver-data:
+  sqlserver2-data:
