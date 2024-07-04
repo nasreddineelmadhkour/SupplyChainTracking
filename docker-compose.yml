@@ -13,8 +13,10 @@ services:
       - sqlserver-data:/var/opt/mssql
     command: >
       /bin/bash -c "
-      /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P MyPgsDb123 -Q 'CREATE DATABASE pgsDB';
-      /opt/mssql/bin/sqlservr
+      /opt/mssql/bin/sqlservr &
+      sleep 20s
+      /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P MyPgsDb123 -Q 'CREATE DATABASE pgsDB'
+      wait
       "
 
   app:
