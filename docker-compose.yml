@@ -2,21 +2,24 @@ version: '3.8'
 services:
   sqlserver2:
     image: mcr.microsoft.com/mssql/server:2019-latest
-    container_name: sqlserver2  # Name your new SQL Server container differently
+    container_name: sqlserver2
     environment:
       - ACCEPT_EULA=Y
       - SA_PASSWORD=MyPgsDb123
       - MSSQL_PID=Express
     ports:
-      - "1434:1433"  # Map container's port 1433 to host's port 1434
+      - "1434:1433"
     volumes:
       - sqlserver-data:/var/opt/mssql
+    healthcheck:
+      test: [ "CMD", "/opt/mssql-tools/bin/sqlcmd", "-S", "localhost", "-U", "sa", "-P", "MyPgsDb123", "-Q", "SELECT 1" ]
+      interval: 10s
+      retries: 5
+      start_period: 30s  # Wait 30 seconds before starting health checks
     command: >
       /bin/bash -c "
-      /opt/mssql/bin/sqlservr &
-      sleep 20s
-      /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P MyPgsDb123 -Q 'CREATE DATABASE pgsDB'
-      wait
+      /opt/mssql/bin/sqlservr & 
+      tail -f /dev/null
       "
 
   app:
@@ -35,7 +38,20 @@ services:
     ports:
       - "8085:8085"
     depends_on:
-      - sqlserver2
+      sqlserver2:
+        condition: service_healthy
+
+  init:
+    image: mcr.microsoft.com/mssql-tools
+    depends_on:
+      sqlserver2:
+        condition: service_healthy
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_PID=Express
+      - SA_PASSWORD=MyPgsDb123
+    command: /bin/bash -c "/opt/mssql-tools/bin/sqlcmd -S sqlserver2 -U sa -P MyPgsDb123 -Q 'CREATE DATABASE pgsDB'"
+    restart: "no"
 
 volumes:
   sqlserver-data:
