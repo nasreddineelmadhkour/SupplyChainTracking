@@ -2,8 +2,9 @@ pipeline {
     agent any
     
     environment {
+        dockerImage = 'supplychaintracking:3.0.0'
         dockerUsername = 'nasreddine007'
-        dockerPassword = 'dckr_pat_7opngvYYdVx1b8MADBUpcxlxJHE'
+        dockerPassword = 'SetYourTokenDocker'
     }
     
     stages {
@@ -53,24 +54,34 @@ pipeline {
             steps {
                 script {
                     sh "docker  login -u $dockerUsername -p $dockerPassword"
-                    // Build the Docker image
-                    sh "docker build -t nasreddine007/supplychaintracking:2.2.0 ."
+                    sh "docker build -t $dockerUsername/$dockerImage ."
                 }
             }
         }
-
+        
+        
         stage('Push Docker Image') {
             steps {
                 script {
 
-                    // Tag and push the Docker image
-                    sh "docker push $dockerUsername/supplychaintracking:2.2.0 "
+                    sh "docker push $dockerUsername/$dockerImage "
 
-                    // Logout from DockerHub
+                }
+            }
+        }
+         
+        stage('Deploy with Docker Compose') {
+            steps {
+                script {
+                    sh "docker login -u $dockerUsername -p $dockerPassword"
+                    sh "docker compose down"
+                    sh "docker compose -f docker-compose.yml up -d"
+                    sh "docker compose logs"
                     sh "docker logout"
                 }
             }
         }
+        
         
     }
 }
