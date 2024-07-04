@@ -1,32 +1,28 @@
 version: '3.8'
 services:
-  pgs-db:
+ sqlserver2:
     image: mcr.microsoft.com/mssql/server:2019-latest
-    container_name: pgs-db
+    container_name: sqlserver2  # Name your new SQL Server container differently
     environment:
-      - SA_PASSWORD=MyPgsDb123
       - ACCEPT_EULA=Y
+      - SA_PASSWORD=MyPgsDb123
+      - MSSQL_PID=Express
     ports:
-      - "1434:1433"
-    networks:
-      - pgsnet
+      - "1434:1433"  # Map container's port 1433 to host's port 1434
     volumes:
-      - sqlserver_data:/var/opt/mssql
-    healthcheck:
-      test: ["CMD-SHELL", "/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P MyPgsDb123 -Q 'SELECT 1'"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
-    entrypoint: [
-      "/bin/sh",
-      "-c",
-      "/opt/mssql/bin/sqlservr & sleep 30 && /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P MyPgsDb123 -Q 'IF NOT EXISTS (SELECT * FROM sys.databases WHERE name = \"pgsDB\") BEGIN CREATE DATABASE pgsDB; END' && fg"
-    ]
+      - sqlserver-data:/var/opt/mssql
+    command:
+      - /bin/bash
+      - -c
+      - |
+        /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P MyPgsDb123 -Q "CREATE DATABASE pgsDB"
+        /opt/mssql/bin/sqlservr
+
 
   app:
     build: .
     environment:
-      SPRING_DATASOURCE_URL: jdbc:sqlserver://pgs-db:1433;databaseName=pgsDB;encrypt=true;trustServerCertificate=true
+      SPRING_DATASOURCE_URL: jdbc:sqlserver://sqlserver2:1433;databaseName=pgsDB;encrypt=true;trustServerCertificate=true
       SPRING_DATASOURCE_USERNAME: sa
       SPRING_DATASOURCE_PASSWORD: MyPgsDb123
       SPRING_JPA_HIBERNATE_DIALECT: org.hibernate.dialect.SQLServerDialect
@@ -39,12 +35,8 @@ services:
     ports:
       - "8085:8085"
     depends_on:
-      - pgs-db
-    networks:
-      - pgsnet
+      - sqlserver2
 
-networks:
-  pgsnet:
 
 volumes:
-  sqlserver_data:
+  sqlserver-data:
