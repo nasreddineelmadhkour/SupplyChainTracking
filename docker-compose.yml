@@ -1,6 +1,6 @@
 version: '3.8'
 services:
- sqlserver2:
+  sqlserver2:
     image: mcr.microsoft.com/mssql/server:2019-latest
     container_name: sqlserver2  # Name your new SQL Server container differently
     environment:
@@ -11,13 +11,11 @@ services:
       - "1434:1433"  # Map container's port 1433 to host's port 1434
     volumes:
       - sqlserver-data:/var/opt/mssql
-    command:
-      - /bin/bash
-      - -c
-      - |
-        /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P MyPgsDb123 -Q "CREATE DATABASE pgsDB"
-        /opt/mssql/bin/sqlservr
-
+    command: >
+      /bin/bash -c "
+      /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P MyPgsDb123 -Q 'CREATE DATABASE pgsDB';
+      /opt/mssql/bin/sqlservr
+      "
 
   app:
     build: .
@@ -36,7 +34,6 @@ services:
       - "8085:8085"
     depends_on:
       - sqlserver2
-
 
 volumes:
   sqlserver-data:
