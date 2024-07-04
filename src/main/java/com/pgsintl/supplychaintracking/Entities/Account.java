@@ -21,10 +21,6 @@ public class Account implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long userNumber;
     String name;
-
-  //  @Lob
-//    byte[] photo;
-  //  String photo ="";
   @Lob
   byte[] photo;
   String namePhoto;

@@ -45,12 +45,10 @@ public class SecurityConfig {
 
                 .authorizeHttpRequests(auth->auth
                         .requestMatchers(
-                                "/account/login"
-                                ,"/account/addCarrier"
+                                "/**/addCarrier","/**/login","/**/SetAllNoPDP","/**/admin"
+                                ,"/account/resetpassword/**/**","/account/resetpassword/**/**/**"
                                 ,"/chat-socket"
-                                ,"/**/admin"
-                                ,"/account/resetpassword/**/**"
-                                ,"/account/resetpassword/**/**/**"
+
                         )
                         .permitAll()
                        .anyRequest().authenticated())

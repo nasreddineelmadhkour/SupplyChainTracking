@@ -1,12 +1,12 @@
 pipeline {
     agent any
-    
+
     environment {
         dockerImage = 'supplychaintracking:3.0.0'
         dockerUsername = 'nasreddine007'
         dockerPassword = 'SetYourTokenDocker'
     }
-    
+
     stages {
         stage('Checkout') {
             steps {
@@ -58,8 +58,8 @@ pipeline {
                 }
             }
         }
-        
-        
+
+
         stage('Push Docker Image') {
             steps {
                 script {
@@ -69,7 +69,7 @@ pipeline {
                 }
             }
         }
-         
+
         stage('Deploy with Docker Compose') {
             steps {
                 script {
@@ -81,7 +81,7 @@ pipeline {
                 }
             }
         }
-        
-        
+
+
     }
 }
