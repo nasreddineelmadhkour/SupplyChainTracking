@@ -1,37 +1,50 @@
 version: '3.8'
-
 services:
-  app:
-    image: nasreddine007/supplychaintracking:2.9.0
-    container_name: SupplyChainTracking
-    environment:
-      - NEXUS_URL=http://172.17.20.244:8081/repository/maven-releases/com/pgsintl/SupplyChainTracking/2.9/SupplyChainTracking-2.9.jar
-    ports:
-      - "8085:8085"
-    command: ["java", "-jar", "/SupplyChainTracking-2.9.jar"]
-    depends_on:
-      - sqlserver2
-    volumes:
-      - .:/app
-    working_dir: /app
-
-  sqlserver2:
+  pgs-db:
     image: mcr.microsoft.com/mssql/server:2019-latest
-    container_name: sqlserver2
+    container_name: pgs-db
     environment:
-      - ACCEPT_EULA=Y
       - SA_PASSWORD=MyPgsDb123
-      - MSSQL_PID=Express
+      - ACCEPT_EULA=Y
     ports:
       - "1434:1433"
+    networks:
+      - pgsnet
     volumes:
-      - sqlserver2-data:/var/opt/mssql
-    command:
-      - /bin/bash
-      - -c
-      - |
-        /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P MyPgsDb123 -Q "CREATE DATABASE pgsDB"
-        /opt/mssql/bin/sqlservr
+      - sqlserver_data:/var/opt/mssql
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P MyPgsDb123 -Q 'SELECT 1'"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    entrypoint: [
+      "/bin/sh",
+      "-c",
+      "/opt/mssql/bin/sqlservr & sleep 30 && /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P MyPgsDb123 -Q 'IF NOT EXISTS (SELECT * FROM sys.databases WHERE name = \"pgsDB\") BEGIN CREATE DATABASE pgsDB; END' && fg"
+    ]
+
+  app:
+    build: .
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:sqlserver://pgs-db:1433;databaseName=pgsDB;encrypt=true;trustServerCertificate=true
+      SPRING_DATASOURCE_USERNAME: sa
+      SPRING_DATASOURCE_PASSWORD: MyPgsDb123
+      SPRING_JPA_HIBERNATE_DIALECT: org.hibernate.dialect.SQLServerDialect
+      SPRING_JPA_SHOW_SQL: "true"
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SERVER_PORT: 8085
+      TWILIO_ACCOUNT_SID: ACa4a43badb4ea62bd6a9173ce6ad36543
+      TWILIO_AUTH_TOKEN: d466cbf27bf02624d8e0994705a8c85d
+      TWILIO_TRIAL_NUMBER: +14845467140
+    ports:
+      - "8085:8085"
+    depends_on:
+      - pgs-db
+    networks:
+      - pgsnet
+
+networks:
+  pgsnet:
 
 volumes:
-  sqlserver2-data:
+  sqlserver_data:
