@@ -12,7 +12,7 @@ services:
     volumes:
       - sqlserver-data:/var/opt/mssql
   app:
-    #build: .
+    build: .
     image: supplychaintracking:3.2
     environment:
       SPRING_DATASOURCE_URL: jdbc:sqlserver://sqlserver2:1433;databaseName=pgsDB;encrypt=true;trustServerCertificate=true
