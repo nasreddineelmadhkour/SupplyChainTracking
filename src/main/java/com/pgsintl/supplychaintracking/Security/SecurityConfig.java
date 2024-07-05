@@ -39,15 +39,23 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
 
-        //httpSecurity.cors(cors->cors.disable());
         return httpSecurity.cors(cors -> cors.configurationSource(corsConfigurationSource())).csrf(csrf->csrf.disable())
-        //return httpSecurity.csrf(csrf->csrf.disable())
-
                 .authorizeHttpRequests(auth->auth
                         .requestMatchers(
-                                "/**/addCarrier","/**/login","/**/SetAllNoPDP","/**/admin"
-                                ,"/account/resetpassword/**/**","/account/resetpassword/**/**/**"
-                                ,"/chat-socket"
+                                "account/login"
+                                ,"account/SetAllNoPDP"
+                                ,"account/admin"
+                                ,"account/addCarrier"
+                                ,"account/resetpassword/SendCodeReset/{identity}"
+                                ,"account/resetpassword/verifyCode/{code}/{identity}"
+                                ,"account/resetpassword/ChangePasswordAfterVerification/{newPassword}/{identity}"
+                                ,"chat-socket"
+                                ,"/actuator/metrics"
+                                ,"/actuator/prometheus"
+                                ,"/actuator/info"
+                                ,"/actuator/env"
+                                ,"/actuator/health"
+
 
                         )
                         .permitAll()
