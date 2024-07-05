@@ -51,8 +51,8 @@ public class SecurityConfig {
 
                         )
                         .permitAll()
-                //       .anyRequest().authenticated())
-                .anyRequest().permitAll())
+                       .anyRequest().authenticated())
+                //.anyRequest().permitAll())
                 .sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
