@@ -1,4 +1,4 @@
-package com.pgsintl.supplychaintracking.Entities;
+package com.pgsintl.supplychaintracking.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -65,18 +65,18 @@ public class Account implements Serializable {
     @JsonIgnore
     // conducteur avec commande
     @OneToMany (mappedBy = "driver")
-    Set<Orders> ordersDriver = new HashSet<>();
+    private List<Orders> ordersDriver = new ArrayList<>();
     @JsonIgnore
     // transporteur avec commande
     @OneToMany (mappedBy = "carrier")
-    List<Orders> ordersCarrier;
+    private List<Orders> ordersCarrier;
 
 
 
     @JsonIgnore
     @OneToMany
     @JoinColumn(name = "carrierNumber")
-    List<Account> drivers = new ArrayList<>();
+    private List<Account> drivers = new ArrayList<>();
 
 
 

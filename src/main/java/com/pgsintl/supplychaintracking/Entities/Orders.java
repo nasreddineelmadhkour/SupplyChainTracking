@@ -1,4 +1,4 @@
-package com.pgsintl.supplychaintracking.Entities;
+package com.pgsintl.supplychaintracking.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -6,13 +6,7 @@ import lombok.*;
 import java.io.Serializable;
 
 
-import jakarta.persistence.*;
-import lombok.*;
-
-import java.io.Serializable;
-import java.sql.Timestamp;
 import java.util.Date;
-import java.util.Set;
 
 @Data
 @Entity
@@ -22,7 +16,8 @@ import java.util.Set;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Orders implements Serializable {
+public class
+Orders implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long ordersNumber;

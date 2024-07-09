@@ -1,16 +1,13 @@
-package com.pgsintl.supplychaintracking.Dto;
+package com.pgsintl.supplychaintracking.dto;
 
-import com.pgsintl.supplychaintracking.Entities.Account;
+import com.pgsintl.supplychaintracking.entities.Account;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 
 
-import com.pgsintl.supplychaintracking.Entities.Account;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
+
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -20,7 +17,7 @@ import java.util.stream.Collectors;
 public class AccountDetails implements UserDetails {
     String userName=null;
     String password = null;
-    List<GrantedAuthority> authorities;
+    private List<GrantedAuthority> authorities;
 
     public AccountDetails(Account userInfo){
         userName= userInfo.getPhoneNumber();

@@ -1,7 +1,7 @@
-package com.pgsintl.supplychaintracking.Services;
+package com.pgsintl.supplychaintracking.services;
 
-import com.pgsintl.supplychaintracking.Dto.OrdersTrackingDto;
-import com.pgsintl.supplychaintracking.Entities.Orders;
+import com.pgsintl.supplychaintracking.dto.OrdersTrackingDto;
+import com.pgsintl.supplychaintracking.entities.Orders;
 
 import java.util.List;
 
@@ -22,4 +22,7 @@ public interface OrdersIService {
 
     public void startingOrders(Long idOrders);
 
+    public boolean deleteOrders(Long idOrders);
+
+    Orders updateOrders(Long orderId, Orders updatedOrders);
 }

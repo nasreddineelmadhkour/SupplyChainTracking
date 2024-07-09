@@ -1,7 +1,6 @@
-package com.pgsintl.supplychaintracking.Dto;
+package com.pgsintl.supplychaintracking.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.pgsintl.supplychaintracking.Entities.Role;
+import com.pgsintl.supplychaintracking.entities.Role;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

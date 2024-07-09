@@ -1,32 +1,27 @@
-package com.pgsintl.supplychaintracking.Controllers;
+package com.pgsintl.supplychaintracking.controllers;
 
-import com.pgsintl.supplychaintracking.Dto.ChatMessage;
-import com.pgsintl.supplychaintracking.Dto.OrdersTrackingDto;
-import com.pgsintl.supplychaintracking.Entities.Orders;
-import com.pgsintl.supplychaintracking.Entities.StatusOrders;
-import com.pgsintl.supplychaintracking.Repository.OrdersRepository;
-import com.pgsintl.supplychaintracking.Services.OrdersIService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.pgsintl.supplychaintracking.dto.OrdersTrackingDto;
+import com.pgsintl.supplychaintracking.repository.OrdersRepository;
+import com.pgsintl.supplychaintracking.services.OrdersIService;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
 
-import java.util.Date;
-
-@Controller
+@Controller  @AllArgsConstructor @Slf4j
 public class WebSocketController {
-    @Autowired
-    OrdersIService ordersIService;
 
-    @Autowired
-    OrdersRepository ordersRepository;
+    private OrdersIService ordersIService;
+    private OrdersRepository ordersRepository;
 
     @MessageMapping("/getPosition/{roomId}")
     @SendTo("/setPosition/{roomId}")
-    public OrdersTrackingDto TrackingOrders(@DestinationVariable String roomId, OrdersTrackingDto ordersTrackingDto) {
+    public OrdersTrackingDto trackingOrders(@DestinationVariable String roomId, OrdersTrackingDto ordersTrackingDto) {
 
-        System.out.println("ID Order : "+ordersTrackingDto.getIdOrders()+"| ordersNowLat:" +ordersTrackingDto.getOrdersNowLat()+" | ordersNowLong:"+ordersTrackingDto.getOrdersNowLong());
+
+        log.info("ID Order : "+ordersTrackingDto.getIdOrders()+"| ordersNowLat:" +ordersTrackingDto.getOrdersNowLat()+" | ordersNowLong:"+ordersTrackingDto.getOrdersNowLong());
 
         ordersIService.updatePosition(ordersTrackingDto);
 

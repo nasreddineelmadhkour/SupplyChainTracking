@@ -1,8 +1,9 @@
-package com.pgsintl.supplychaintracking.Entities;
+package com.pgsintl.supplychaintracking.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.io.Serializable;
 import java.util.Date;
 
 @Data
@@ -13,7 +14,7 @@ import java.util.Date;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Reclamation {
+public class Reclamation implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long reclamationNumber;

@@ -1,4 +1,4 @@
-package com.pgsintl.supplychaintracking.Dto;
+package com.pgsintl.supplychaintracking.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

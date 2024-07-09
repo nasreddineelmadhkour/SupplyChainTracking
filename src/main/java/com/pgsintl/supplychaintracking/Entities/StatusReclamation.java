@@ -1,4 +1,4 @@
-package com.pgsintl.supplychaintracking.Entities;
+package com.pgsintl.supplychaintracking.entities;
 
 public enum StatusReclamation {
     RESOLVED,NOT_RESOLVED

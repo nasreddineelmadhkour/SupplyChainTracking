@@ -1,13 +1,13 @@
-package com.pgsintl.supplychaintracking.Services;
+package com.pgsintl.supplychaintracking.services;
 
-import com.pgsintl.supplychaintracking.Config.TwilioConfig;
-import com.pgsintl.supplychaintracking.Dto.AccountLoginDto;
-import com.pgsintl.supplychaintracking.Entities.Account;
-import com.pgsintl.supplychaintracking.Entities.Role;
-import com.pgsintl.supplychaintracking.Repository.AccountRepository;
-import com.pgsintl.supplychaintracking.Utils.ImageUtils;
+import com.pgsintl.supplychaintracking.config.TwilioConfig;
+import com.pgsintl.supplychaintracking.dto.AccountLoginDto;
+import com.pgsintl.supplychaintracking.entities.Account;
+import com.pgsintl.supplychaintracking.entities.Role;
+import com.pgsintl.supplychaintracking.repository.AccountRepository;
+import com.pgsintl.supplychaintracking.utils.ImageUtils;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -18,14 +18,12 @@ import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
-@Service @AllArgsConstructor
+@Service @AllArgsConstructor @Slf4j
 public class AccountService implements AccountIService {
     AccountRepository accountRepository;
 
-    @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @Autowired
     private TwilioConfig twilioConfig;
 /*
     @PostConstruct
@@ -34,7 +32,7 @@ public class AccountService implements AccountIService {
     }*/
 
     @Override
-    public Account CreatAccountCarrier(Account carrier)
+    public Account creatAccountCarrier(Account carrier)
     {
         carrier.setRole(Role.CARRIER);
         carrier.setPassword(passwordEncoder.encode(carrier.getPassword()));
@@ -46,7 +44,7 @@ public class AccountService implements AccountIService {
 
 
     @Override
-    public Account CreatAccountDriver(String name, String password , String email, String cardNumber , String serialNumber , String phoneNumber, MultipartFile file, Long idCarrier)throws IOException {
+    public Account creatAccountDriver(String name, String password , String email, String cardNumber , String serialNumber , String phoneNumber, MultipartFile file, Long idCarrier)throws IOException {
 
         Account driver = new Account();
         driver.setPhoneNumber(phoneNumber);
@@ -61,13 +59,6 @@ public class AccountService implements AccountIService {
         driver.setNamePhoto(file.getOriginalFilename());
         driver.setTypePhoto(file.getContentType());
         driver.setPhoto(ImageUtils.compressImage(file.getBytes()));
-        /*
-        Photo imageData = photoRepository.save(Photo.builder()
-                .namePhoto(file.getOriginalFilename())
-                .type(file.getContentType())
-                .photo(ImageUtils.compressImage(file.getBytes())).build());
-*/
-
 
         Account carrier = accountRepository.findById(idCarrier).orElse(null);
 
@@ -103,8 +94,6 @@ public class AccountService implements AccountIService {
 
     @Override
     public List<Account> getAllDriverByCarrier(Long idCarrier) {
-        //return accountRepository.findById(idCarrier).get().getDrivers().stream().toList();
-
         List<Account> accounts = new ArrayList<>();
 
         for (Account account : accountRepository.findById(idCarrier).get().getDrivers().stream().toList()){
@@ -120,7 +109,7 @@ public class AccountService implements AccountIService {
 
 
     @Override
-    public boolean SetAllNoPDP(MultipartFile file) throws IOException{
+    public boolean setAllNoPDP(MultipartFile file) throws IOException{
 
         for (Account account : accountRepository.findAll()){
             account.setNamePhoto(file.getOriginalFilename());
@@ -134,20 +123,20 @@ public class AccountService implements AccountIService {
     }
 
     @Override
-    public boolean SendCodeReset(String identity) {
+    public boolean sendCodeReset(String identity) {
 
         Account account = accountRepository.findByPhoneNumber(identity).orElse(null);
 
         if(account!= null){
 
             account.setCodeTel(String.valueOf(generateCode()));
-            System.out.println(account.getCodeTel());
+            log.info(account.getCodeTel());
             accountRepository.save(account);
 
            // PhoneNumber to = new PhoneNumber("+21628000046");
             //PhoneNumber from = new PhoneNumber(twilioConfig.getTrialNumber());
             String m = "Your Code verification code is: "+account.getCodeTel();
-            System.out.println(m);
+            log.info(m);
             //Message message = Message
               //         .creator(to,from,m).create();
 
@@ -171,18 +160,18 @@ public class AccountService implements AccountIService {
     public boolean verifyCode(String code , String identity){
         Account account = accountRepository.findByPhoneNumber(identity).orElse(null);
 
-        if(account != null){
-            if(account.getCodeTel().equals(code)){
+        if(account != null && account.getCodeTel().equals(code)){
+
                 account.setCodeTel(null);
                 accountRepository.save(account);
                 return true;
-            }
+
         }
 
         return false;
     }
 
-    public boolean ChangePasswordAfterVerification(String newPassword , String identity){
+    public boolean changePasswordAfterVerification(String newPassword , String identity){
         Account account = accountRepository.findByPhoneNumber(identity).orElse(null);
         if(account!=null){
             account.setPassword(passwordEncoder.encode(newPassword));
@@ -201,8 +190,8 @@ public class AccountService implements AccountIService {
             accountRepository.deleteById(idDriver);
             return true;
         }
-        catch (Error e){
-            System.out.println("Error :" +e);
+        catch (RuntimeException e){
+            log.error("Error :" +e);
             return false;
         }
 

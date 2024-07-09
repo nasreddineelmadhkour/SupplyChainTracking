@@ -1,12 +1,13 @@
-package com.pgsintl.supplychaintracking.Services;
+package com.pgsintl.supplychaintracking.services;
 
-import com.pgsintl.supplychaintracking.Dto.AccountDetails;
-import com.pgsintl.supplychaintracking.Dto.AccountLoginDto;
-import com.pgsintl.supplychaintracking.Entities.Account;
-import com.pgsintl.supplychaintracking.Repository.AccountRepository;
+import com.pgsintl.supplychaintracking.dto.AccountDetails;
+import com.pgsintl.supplychaintracking.dto.AccountLoginDto;
+import com.pgsintl.supplychaintracking.entities.Account;
+import com.pgsintl.supplychaintracking.repository.AccountRepository;
 
-import com.pgsintl.supplychaintracking.Utils.ImageUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.pgsintl.supplychaintracking.utils.ImageUtils;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -16,13 +17,10 @@ import java.util.List;
 import java.util.Optional;
 
 
-@Service
+@Service @AllArgsConstructor @NoArgsConstructor
 public class AccountSecurityService implements UserDetailsService {
-    @Autowired
     private AccountRepository userInfoRepository;
-    @Autowired
     private PasswordEncoder passwordEncoder;
-    @Autowired
     private JwtService jwtService;
     @Override
     public AccountDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -62,20 +60,20 @@ public class AccountSecurityService implements UserDetailsService {
             accountLoginDto.setToken(jwtService.generateToken(username));
         }else
         {
-            Account AccountEmail= userInfoRepository.findByEmail(username).orElse(null);
-            if(AccountEmail!= null){
-                accountLoginDto.setUserNumber(AccountEmail.getUserNumber());
-                accountLoginDto.setEmail(AccountEmail.getEmail());
-                accountLoginDto.setIsAccountNonExpired(AccountEmail.getIsAccountNonExpired());
-                accountLoginDto.setRole(AccountEmail.getRole());
-                accountLoginDto.setName(AccountEmail.getName());
-                accountLoginDto.setPassword(AccountEmail.getPassword());
-                accountLoginDto.setActivateCode(AccountEmail.getActivateCode());
-                accountLoginDto.setIsAccountNonLocked(AccountEmail.getIsAccountNonLocked());
-                accountLoginDto.setIsEnabled(AccountEmail.getIsEnabled());
+            Account accountEmail= userInfoRepository.findByEmail(username).orElse(null);
+            if(accountEmail!= null){
+                accountLoginDto.setUserNumber(accountEmail.getUserNumber());
+                accountLoginDto.setEmail(accountEmail.getEmail());
+                accountLoginDto.setIsAccountNonExpired(accountEmail.getIsAccountNonExpired());
+                accountLoginDto.setRole(accountEmail.getRole());
+                accountLoginDto.setName(accountEmail.getName());
+                accountLoginDto.setPassword(accountEmail.getPassword());
+                accountLoginDto.setActivateCode(accountEmail.getActivateCode());
+                accountLoginDto.setIsAccountNonLocked(accountEmail.getIsAccountNonLocked());
+                accountLoginDto.setIsEnabled(accountEmail.getIsEnabled());
                 byte[] images= ImageUtils.decompressImage(account.getPhoto());
                 accountLoginDto.setPhoto(images);
-                accountLoginDto.setPhoneNumber(AccountEmail.getPhoneNumber());
+                accountLoginDto.setPhoneNumber(accountEmail.getPhoneNumber());
                 accountLoginDto.setToken(jwtService.generateToken(username));
             }
         }

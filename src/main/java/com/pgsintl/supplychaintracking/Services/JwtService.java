@@ -1,4 +1,4 @@
-package com.pgsintl.supplychaintracking.Services;
+package com.pgsintl.supplychaintracking.services;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

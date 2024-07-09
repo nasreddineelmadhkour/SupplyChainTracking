@@ -1,10 +1,11 @@
-package com.pgsintl.supplychaintracking.Controllers;
+package com.pgsintl.supplychaintracking.controllers;
 
-import com.pgsintl.supplychaintracking.Dto.AccountLoginDto;
-import com.pgsintl.supplychaintracking.Entities.Account;
-import com.pgsintl.supplychaintracking.Entities.AuthRequest;
-import com.pgsintl.supplychaintracking.Services.AccountIService;
-import com.pgsintl.supplychaintracking.Services.AccountSecurityService;
+import com.pgsintl.supplychaintracking.dto.AccountLoginDto;
+import com.pgsintl.supplychaintracking.entities.Account;
+import com.pgsintl.supplychaintracking.entities.AuthRequest;
+import com.pgsintl.supplychaintracking.services.AccountIService;
+import com.pgsintl.supplychaintracking.services.AccountSecurityService;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -19,24 +20,19 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/account")
+@AllArgsConstructor
 public class AccountController {
 
 
-    @Autowired
     private AuthenticationManager authenticationManager;
-    @Autowired
     private AccountIService accountIService;
-
-    @Autowired
-    AccountSecurityService accountSecurityService;
+    private AccountSecurityService accountSecurityService;
 
     @PostMapping("/login")
     public AccountLoginDto login(@RequestBody AuthRequest authRequest){
         Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword()));
         if(authenticate.isAuthenticated()){
             return accountSecurityService.loginSucces(authRequest.getUsername());
-
-           // return jwtService.generateToken(authRequest.getUsername());
         }else {
             throw new UsernameNotFoundException("Invalid user request");
         }
@@ -46,7 +42,7 @@ public class AccountController {
 
     @PostMapping("/addCarrier")
     public Account addCarrier(@RequestBody Account carrier) {
-        return accountIService.CreatAccountCarrier(carrier);
+        return accountIService.creatAccountCarrier(carrier);
     }
 
 
@@ -65,7 +61,7 @@ public class AccountController {
 
 
 
-            return accountIService.CreatAccountDriver( name,  password ,  email,  cardNumber ,  serialNumber ,  phoneNumber,  file, idCarrier) ;
+            return accountIService.creatAccountDriver( name,  password ,  email,  cardNumber ,  serialNumber ,  phoneNumber,  file, idCarrier) ;
     }
 
 
@@ -113,9 +109,9 @@ public class AccountController {
 
 
     @PostMapping("/SetAllNoPDP")
-    public boolean SetAllNoPDP(@RequestParam("image") MultipartFile file) throws IOException {
+    public boolean setAllNoPDP(@RequestParam("image") MultipartFile file) throws IOException {
 
-        return accountIService.SetAllNoPDP(file);
+        return accountIService.setAllNoPDP(file);
 
     }
 
@@ -124,8 +120,8 @@ public class AccountController {
 
     // *************************** RESET PASSWORD WITH TWILIO ****************************************
     @GetMapping("/resetpassword/SendCodeReset/{identity}")
-    public boolean SendCodeReset(@PathVariable String identity){
-        return accountIService.SendCodeReset(identity);
+    public boolean sendCodeReset(@PathVariable String identity){
+        return accountIService.sendCodeReset(identity);
     }
 
     @GetMapping("/resetpassword/verifyCode/{code}/{identity}")
@@ -134,8 +130,8 @@ public class AccountController {
     }
 
     @GetMapping("/resetpassword/ChangePasswordAfterVerification/{newPassword}/{identity}")
-    public boolean ChangePasswordAfterVerification(@PathVariable String newPassword ,@PathVariable String identity){
-        return accountIService.ChangePasswordAfterVerification(newPassword,identity);
+    public boolean changePasswordAfterVerification(@PathVariable String newPassword ,@PathVariable String identity){
+        return accountIService.changePasswordAfterVerification(newPassword,identity);
     }
 
 

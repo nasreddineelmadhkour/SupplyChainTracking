@@ -1,9 +1,9 @@
-package com.pgsintl.supplychaintracking.Services;
+package com.pgsintl.supplychaintracking.services;
 
-import com.pgsintl.supplychaintracking.Entities.Orders;
-import com.pgsintl.supplychaintracking.Entities.Reclamation;
-import com.pgsintl.supplychaintracking.Repository.OrdersRepository;
-import com.pgsintl.supplychaintracking.Repository.ReclamationRepository;
+import com.pgsintl.supplychaintracking.entities.Orders;
+import com.pgsintl.supplychaintracking.entities.Reclamation;
+import com.pgsintl.supplychaintracking.repository.OrdersRepository;
+import com.pgsintl.supplychaintracking.repository.ReclamationRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,10 +20,13 @@ public class ReclamationService implements ReclamationIService {
 
         Orders orders = ordersRepository.findById(idOrders).orElse(null);
 
-        orders.setReclamation(reclamation);
-        ordersRepository.save(orders);
+            if(orders!=null) {
+                orders.setReclamation(reclamation);
+                ordersRepository.save(orders);
+                return orders.getReclamation();
 
-        return orders.getReclamation();
+            }
+            return null;
     }
 
 

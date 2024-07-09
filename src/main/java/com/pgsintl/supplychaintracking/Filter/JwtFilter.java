@@ -1,14 +1,13 @@
-package com.pgsintl.supplychaintracking.Filter;
+package com.pgsintl.supplychaintracking.filter;
 
-import com.pgsintl.supplychaintracking.Dto.AccountDetails;
-import com.pgsintl.supplychaintracking.Services.AccountSecurityService;
-import com.pgsintl.supplychaintracking.Services.JwtService;
-import com.pgsintl.supplychaintracking.Services.AccountService;
+import com.pgsintl.supplychaintracking.dto.AccountDetails;
+import com.pgsintl.supplychaintracking.services.AccountSecurityService;
+import com.pgsintl.supplychaintracking.services.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
@@ -17,11 +16,10 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
-@Component
+@Component @AllArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
-    @Autowired
+
     private JwtService jwtService;
-    @Autowired
     private AccountSecurityService accountSecurityService;
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
