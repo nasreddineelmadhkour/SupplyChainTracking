@@ -7,13 +7,10 @@ import lombok.*;
 import java.io.Serializable;
 import java.util.*;
 
-@Data
 @Entity
 @Table(name = "account")
-@Builder
 @Setter
 @Getter
-@AllArgsConstructor
 @NoArgsConstructor
 public class Account implements Serializable {
 

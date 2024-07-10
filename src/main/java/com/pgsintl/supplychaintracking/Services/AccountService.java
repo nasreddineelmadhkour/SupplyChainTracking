@@ -6,10 +6,11 @@ import com.pgsintl.supplychaintracking.Entities.Account;
 import com.pgsintl.supplychaintracking.Entities.Role;
 import com.pgsintl.supplychaintracking.Repository.AccountRepository;
 import com.pgsintl.supplychaintracking.Utils.ImageUtils;
+import com.twilio.Twilio;
+import jakarta.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,7 +21,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
-@Service  @Slf4j @NoArgsConstructor
+@Service
+@Slf4j
+@AllArgsConstructor
+@NoArgsConstructor
 public class AccountService implements AccountIService {
 
     private AccountRepository accountRepository;
@@ -34,7 +38,7 @@ public class AccountService implements AccountIService {
 /*
     @PostConstruct
     public void initTwilio(){
-        Twilio.init(twilioConfig.getAccountSid(),twilioConfig.getAuthToken());
+        Twilio.init(twilioConfig.getAccountSid(),twilioConfig.getAuTo());
     }*/
 
     @Override
