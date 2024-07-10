@@ -6,13 +6,10 @@ import lombok.*;
 import java.io.Serializable;
 import java.util.Date;
 
-@Data
 @Entity
 @Table(name = "reclamation")
-@Builder
 @Setter
 @Getter
-@AllArgsConstructor
 @NoArgsConstructor
 public class Reclamation implements Serializable {
     @Id
@@ -22,5 +19,4 @@ public class Reclamation implements Serializable {
     Date dateReclamation;
     @Enumerated(EnumType.STRING)
     StatusReclamation statusReclamation;
-
 }
