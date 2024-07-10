@@ -23,7 +23,7 @@ import static org.mockito.Mockito.*;
 @SpringBootTest
 class SupplyChainTrackingApplicationTests {
 
-    @Mock
+     @Mock
     private AccountService accountService;
 
     @Mock
@@ -48,24 +48,10 @@ class SupplyChainTrackingApplicationTests {
     // Tests for addOrder method
 
     @Test
-    void testAddOrder() {
+    public void testAddOrder() {
         // Mock data
         Orders orders = new Orders();
         orders.setOrdersNumber(1L);
-        orders.setOrdersNowLat(25.30);
-        orders.setOrdersNowLong(15.33);
-
-        orders.setStatus(StatusOrders.PENDING);
-        orders.setDateOrders(new Date());
-        orders.setDateFinOrders(new Date());
-        orders.setProductOrders("Gasoline");
-        orders.setWeightOrders(35000);
-        orders.setUnitProduct("litre");
-        orders.setEstimation("35 MIN");
-        orders.setDistance("152 KM");
-        orders.setArrivalPoint("Ariana");
-        orders.setStartingPoint("Seliena");
-
         Long idCarrier = 1L;
         Long idDriver = 2L;
         Account mockCarrier = new Account();
@@ -90,7 +76,7 @@ class SupplyChainTrackingApplicationTests {
     // Tests for getAllOrders method
 
     @Test
-    void testGetAllOrders() {
+    public void testGetAllOrders() {
         // Mock repository behavior
         List<Orders> mockOrdersList = new ArrayList<>();
         when(ordersRepository.findAll()).thenReturn(mockOrdersList);
@@ -102,6 +88,9 @@ class SupplyChainTrackingApplicationTests {
         verify(ordersRepository, times(1)).findAll();
         assertEquals(mockOrdersList, result);
     }
+
+    // Additional tests can be added for other methods similarly
+
 
 
 
