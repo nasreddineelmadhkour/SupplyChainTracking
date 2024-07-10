@@ -8,6 +8,7 @@ import com.pgsintl.supplychaintracking.repository.AccountRepository;
 import com.pgsintl.supplychaintracking.utils.ImageUtils;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -18,11 +19,15 @@ import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
-@Service @AllArgsConstructor @Slf4j
+@Service  @Slf4j
 public class AccountService implements AccountIService {
-    AccountRepository accountRepository;
+    @Autowired
+
+    private AccountRepository accountRepository;
+    @Autowired
 
     private PasswordEncoder passwordEncoder;
+    @Autowired
 
     private TwilioConfig twilioConfig;
 /*

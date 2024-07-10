@@ -8,16 +8,21 @@ import com.pgsintl.supplychaintracking.repository.AccountRepository;
 import com.pgsintl.supplychaintracking.repository.OrdersRepository;
 import com.pgsintl.supplychaintracking.repository.ReclamationRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 
-@AllArgsConstructor
 @Service
 public class OrdersService implements OrdersIService {
+    @Autowired
 
     OrdersRepository ordersRepository;
+    @Autowired
+
     ReclamationRepository reclamationRepository;
+    @Autowired
+
     AccountRepository accountRepository;
     @Override
     public Orders addOrder(Orders orders, Long idCarrier, Long idDriver) {

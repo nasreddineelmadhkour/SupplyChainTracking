@@ -4,14 +4,18 @@ import com.pgsintl.supplychaintracking.entities.Orders;
 import com.pgsintl.supplychaintracking.entities.Reclamation;
 import com.pgsintl.supplychaintracking.repository.OrdersRepository;
 import com.pgsintl.supplychaintracking.repository.ReclamationRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
 public class ReclamationService implements ReclamationIService {
+    @Autowired
 
     OrdersRepository ordersRepository;
+    @Autowired
+
     ReclamationRepository reclamationRepository;
 
 

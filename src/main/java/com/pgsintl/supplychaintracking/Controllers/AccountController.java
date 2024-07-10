@@ -20,12 +20,17 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/account")
-@AllArgsConstructor
+
 public class AccountController {
 
 
+    @Autowired
     private AuthenticationManager authenticationManager;
+    @Autowired
+
     private AccountIService accountIService;
+    @Autowired
+
     private AccountSecurityService accountSecurityService;
 
     @PostMapping("/login")

@@ -8,6 +8,7 @@ import com.pgsintl.supplychaintracking.repository.AccountRepository;
 import com.pgsintl.supplychaintracking.utils.ImageUtils;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -17,10 +18,16 @@ import java.util.List;
 import java.util.Optional;
 
 
-@Service @AllArgsConstructor @NoArgsConstructor
+@Service @AllArgsConstructor
 public class AccountSecurityService implements UserDetailsService {
+    @Autowired
+
     private AccountRepository userInfoRepository;
+
+    @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
     private JwtService jwtService;
     @Override
     public AccountDetails loadUserByUsername(String username) throws UsernameNotFoundException {
