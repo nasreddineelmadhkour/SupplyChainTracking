@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Optional;
 
 
-@Service @AllArgsConstructor
+@Service
 public class AccountSecurityService implements UserDetailsService {
     @Autowired
 
