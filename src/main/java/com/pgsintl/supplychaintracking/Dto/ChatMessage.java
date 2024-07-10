@@ -1,12 +1,10 @@
 package com.pgsintl.supplychaintracking.Dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.*;
 
 import java.util.Date;
 
-@Data
-@AllArgsConstructor
+@Getter @Setter @AllArgsConstructor @NoArgsConstructor
 public class ChatMessage {
     String message;
     String user;
