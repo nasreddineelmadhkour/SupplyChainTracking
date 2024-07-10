@@ -43,6 +43,8 @@ class SupplyChainTrackingApplicationTests {
     @BeforeEach
     public void setup() {
         MockitoAnnotations.initMocks(this);
+        reclamationRepository.deleteAll();
+
     }
 
     // Tests for addOrder method
@@ -233,6 +235,74 @@ class SupplyChainTrackingApplicationTests {
         verify(ordersRepository, times(1)).findById(orderId);
         verify(ordersRepository, times(1)).deleteById(orderId);
         assertTrue(result);
+    }
+
+
+
+
+    @Test
+    void testReclamationCreation() {
+        Reclamation reclamation = Reclamation.builder()
+                .reclamationNumber(1L)
+                .description("Description of the reclamation")
+                .dateReclamation(new Date())
+                .statusReclamation(StatusReclamation.NOT_RESOLVED)
+                .build();
+
+        assertEquals(1L, reclamation.getReclamationNumber());
+        assertEquals("Description of the reclamation", reclamation.getDescription());
+        assertEquals(StatusReclamation.NOT_RESOLVED, reclamation.getStatusReclamation());
+    }
+
+
+    @Test
+    public void testSaveAndFindById() {
+        Reclamation reclamation = Reclamation.builder()
+                .reclamationNumber(1L)
+                .description("Test Reclamation")
+                .dateReclamation(new Date())
+                .statusReclamation(StatusReclamation.NOT_RESOLVED)
+                .build();
+
+        // Mock the save method to return the reclamation object
+        when(reclamationRepository.save(any(Reclamation.class))).thenReturn(reclamation);
+
+        // Save the reclamation
+        Reclamation savedReclamation = reclamationRepository.save(reclamation);
+
+        // Mock the findById method to return the saved reclamation
+        when(reclamationRepository.findById(savedReclamation.getReclamationNumber())).thenReturn(Optional.of(savedReclamation));
+
+        // Find the reclamation by ID
+        Optional<Reclamation> foundReclamation = reclamationRepository.findById(savedReclamation.getReclamationNumber());
+
+        // Assertions to validate the result
+        assertTrue(foundReclamation.isPresent());
+        assertEquals(savedReclamation.getReclamationNumber(), foundReclamation.get().getReclamationNumber());
+        assertEquals("Test Reclamation", foundReclamation.get().getDescription());
+        assertEquals(StatusReclamation.NOT_RESOLVED, foundReclamation.get().getStatusReclamation());
+    }
+
+    @Test
+    public void testFindByStatusReclamation() {
+        // Ensure you are using the correct status
+        StatusReclamation status = StatusReclamation.NOT_RESOLVED;
+
+        // Create a new Reclamation object
+        Reclamation reclamation = Reclamation.builder()
+                .description("Test Reclamation")
+                .dateReclamation(new Date())
+                .statusReclamation(status)
+                .build();
+
+        // Save the reclamation to the repository
+        reclamationRepository.save(reclamation);
+
+        // Fetch reclamations with the status NOT_RESOLVED
+        List<Reclamation> reclamations = reclamationRepository.findByStatusReclamation(status);
+
+        // Assertions to validate the result
+        assertNotNull(reclamations, "Reclamations list should not be null");
     }
 
 
