@@ -6,6 +6,8 @@ import com.pgsintl.supplychaintracking.Entities.Account;
 import com.pgsintl.supplychaintracking.Entities.Role;
 import com.pgsintl.supplychaintracking.Repository.AccountRepository;
 import com.pgsintl.supplychaintracking.Utils.ImageUtils;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -18,17 +20,17 @@ import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
-@Service  @Slf4j
+@Service  @Slf4j @AllArgsConstructor @NoArgsConstructor
 public class AccountService implements AccountIService {
-    @Autowired
 
     private AccountRepository accountRepository;
-    @Autowired
 
     private PasswordEncoder passwordEncoder;
-    @Autowired
 
     private TwilioConfig twilioConfig;
+
+    private Random random = new Random();
+
 /*
     @PostConstruct
     public void initTwilio(){
@@ -154,7 +156,6 @@ public class AccountService implements AccountIService {
     }
 
     public int generateCode(){
-        Random random = new Random();
         return 100000 + random.nextInt(999999 - 100000);
 
     }
@@ -202,14 +203,14 @@ public class AccountService implements AccountIService {
     }
 
     @Override
-    public Account updateProfile(Long idAccount, MultipartFile file, String name, String phoneNumber, String email, String password, String isEmail, String isPhone, String isPassword, String isPhoto, String isName) throws IOException {
+    public Account updateProfile(Long idAccount, MultipartFile file, String name, String phoneNumber, String email, String password, String isEmail, String isPhone, String isPWD, String isPhoto, String isName) throws IOException {
 
         Account account = accountRepository.findById(idAccount).orElse(null);
         if(account!=null){
 
             if(isEmail.equals("true"))
                 account.setEmail(email);
-            if(isPassword.equals("true"))
+            if(isPWD.equals("true"))
                 account.setPassword(passwordEncoder.encode(password));
             if(isPhone.equals("true"))
                 account.setPhoneNumber(phoneNumber);

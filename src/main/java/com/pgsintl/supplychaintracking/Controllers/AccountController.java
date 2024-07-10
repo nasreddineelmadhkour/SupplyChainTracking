@@ -79,13 +79,13 @@ public class AccountController {
             ,@RequestParam("isName") String isName
             ,@RequestParam("isEmail") String isEmail
             ,@RequestParam("isPhone") String isPhone
-            ,@RequestParam("isPassword") String isPassword
+            ,@RequestParam("isPassword") String isPWD
             ,@RequestParam("isPhoto") String isPhoto
 
 
     ) throws IOException{
 
-        return accountIService.updateProfile(idAccount,file,name,phoneNumber,email,password,isEmail,isPhone,isPassword,isPhoto,isName);
+        return accountIService.updateProfile(idAccount,file,name,phoneNumber,email,password,isEmail,isPhone,isPWD,isPhoto,isName);
 
     }
 
