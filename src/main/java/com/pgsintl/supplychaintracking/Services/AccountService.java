@@ -20,7 +20,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
-@Service  @Slf4j @AllArgsConstructor @NoArgsConstructor
+@Service  @Slf4j @NoArgsConstructor
 public class AccountService implements AccountIService {
 
     private AccountRepository accountRepository;
