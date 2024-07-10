@@ -12,8 +12,8 @@ import org.springframework.stereotype.Controller;
 
 @Controller   @Slf4j @AllArgsConstructor
 public class WebSocketController {
+
     private OrdersIService ordersIService;
-    private OrdersRepository ordersRepository;
 
     @MessageMapping("/getPosition/{roomId}")
     @SendTo("/setPosition/{roomId}")
