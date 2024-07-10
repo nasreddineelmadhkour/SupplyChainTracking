@@ -1,8 +1,7 @@
-package com.pgsintl.supplychaintracking.controllers;
+package com.pgsintl.supplychaintracking.Controllers;
 
-import com.pgsintl.supplychaintracking.entities.Reclamation;
-import com.pgsintl.supplychaintracking.services.ReclamationIService;
-import lombok.AllArgsConstructor;
+import com.pgsintl.supplychaintracking.Entities.Reclamation;
+import com.pgsintl.supplychaintracking.Services.ReclamationIService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

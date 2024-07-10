@@ -1,6 +1,6 @@
-package com.pgsintl.supplychaintracking.services;
+package com.pgsintl.supplychaintracking.Services;
 
-import com.pgsintl.supplychaintracking.entities.Reclamation;
+import com.pgsintl.supplychaintracking.Entities.Reclamation;
 
 import java.util.List;
 

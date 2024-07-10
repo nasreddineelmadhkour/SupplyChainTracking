@@ -1,7 +1,7 @@
-package com.pgsintl.supplychaintracking.services;
+package com.pgsintl.supplychaintracking.Services;
 
-import com.pgsintl.supplychaintracking.dto.OrdersTrackingDto;
-import com.pgsintl.supplychaintracking.entities.Orders;
+import com.pgsintl.supplychaintracking.Dto.OrdersTrackingDto;
+import com.pgsintl.supplychaintracking.Entities.Orders;
 
 import java.util.List;
 

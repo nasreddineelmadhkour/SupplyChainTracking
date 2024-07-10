@@ -1,11 +1,10 @@
-package com.pgsintl.supplychaintracking.controllers;
+package com.pgsintl.supplychaintracking.Controllers;
 
-import com.pgsintl.supplychaintracking.dto.AccountLoginDto;
-import com.pgsintl.supplychaintracking.entities.Account;
-import com.pgsintl.supplychaintracking.entities.AuthRequest;
-import com.pgsintl.supplychaintracking.services.AccountIService;
-import com.pgsintl.supplychaintracking.services.AccountSecurityService;
-import lombok.AllArgsConstructor;
+import com.pgsintl.supplychaintracking.Dto.AccountLoginDto;
+import com.pgsintl.supplychaintracking.Entities.Account;
+import com.pgsintl.supplychaintracking.Entities.AuthRequest;
+import com.pgsintl.supplychaintracking.Services.AccountIService;
+import com.pgsintl.supplychaintracking.Services.AccountSecurityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

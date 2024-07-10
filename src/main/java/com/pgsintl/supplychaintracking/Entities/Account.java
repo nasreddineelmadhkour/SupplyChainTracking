@@ -1,4 +1,4 @@
-package com.pgsintl.supplychaintracking.entities;
+package com.pgsintl.supplychaintracking.Entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;

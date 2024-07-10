@@ -1,4 +1,4 @@
-package com.pgsintl.supplychaintracking.entities;
+package com.pgsintl.supplychaintracking.Entities;
 
 public enum Role {
     DRIVER,CARRIER

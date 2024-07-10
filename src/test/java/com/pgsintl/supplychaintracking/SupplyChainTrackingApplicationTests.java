@@ -1,12 +1,12 @@
 package com.pgsintl.supplychaintracking;
 
-import com.pgsintl.supplychaintracking.dto.OrdersTrackingDto;
-import com.pgsintl.supplychaintracking.entities.*;
-import com.pgsintl.supplychaintracking.repository.AccountRepository;
-import com.pgsintl.supplychaintracking.repository.OrdersRepository;
-import com.pgsintl.supplychaintracking.repository.ReclamationRepository;
-import com.pgsintl.supplychaintracking.services.AccountService;
-import com.pgsintl.supplychaintracking.services.OrdersService;
+import com.pgsintl.supplychaintracking.Dto.OrdersTrackingDto;
+import com.pgsintl.supplychaintracking.Entities.*;
+import com.pgsintl.supplychaintracking.Repository.AccountRepository;
+import com.pgsintl.supplychaintracking.Repository.OrdersRepository;
+import com.pgsintl.supplychaintracking.Repository.ReclamationRepository;
+import com.pgsintl.supplychaintracking.Services.AccountService;
+import com.pgsintl.supplychaintracking.Services.OrdersService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;

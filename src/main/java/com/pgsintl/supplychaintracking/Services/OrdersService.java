@@ -1,13 +1,12 @@
-package com.pgsintl.supplychaintracking.services;
+package com.pgsintl.supplychaintracking.Services;
 
-import com.pgsintl.supplychaintracking.dto.OrdersTrackingDto;
-import com.pgsintl.supplychaintracking.entities.Account;
-import com.pgsintl.supplychaintracking.entities.Orders;
-import com.pgsintl.supplychaintracking.entities.StatusOrders;
-import com.pgsintl.supplychaintracking.repository.AccountRepository;
-import com.pgsintl.supplychaintracking.repository.OrdersRepository;
-import com.pgsintl.supplychaintracking.repository.ReclamationRepository;
-import lombok.AllArgsConstructor;
+import com.pgsintl.supplychaintracking.Dto.OrdersTrackingDto;
+import com.pgsintl.supplychaintracking.Entities.Account;
+import com.pgsintl.supplychaintracking.Entities.Orders;
+import com.pgsintl.supplychaintracking.Entities.StatusOrders;
+import com.pgsintl.supplychaintracking.Repository.AccountRepository;
+import com.pgsintl.supplychaintracking.Repository.OrdersRepository;
+import com.pgsintl.supplychaintracking.Repository.ReclamationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

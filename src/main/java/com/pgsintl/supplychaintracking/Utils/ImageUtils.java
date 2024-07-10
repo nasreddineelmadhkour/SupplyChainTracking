@@ -1,4 +1,4 @@
-package com.pgsintl.supplychaintracking.utils;
+package com.pgsintl.supplychaintracking.Utils;
 
 import java.io.ByteArrayOutputStream;
 import java.util.zip.Deflater;

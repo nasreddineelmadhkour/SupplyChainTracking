@@ -1,6 +1,6 @@
-package com.pgsintl.supplychaintracking.dto;
+package com.pgsintl.supplychaintracking.Dto;
 
-import com.pgsintl.supplychaintracking.entities.Role;
+import com.pgsintl.supplychaintracking.Entities.Role;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

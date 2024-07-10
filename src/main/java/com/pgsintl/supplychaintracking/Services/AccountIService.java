@@ -1,7 +1,7 @@
-package com.pgsintl.supplychaintracking.services;
+package com.pgsintl.supplychaintracking.Services;
 
-import com.pgsintl.supplychaintracking.dto.AccountLoginDto;
-import com.pgsintl.supplychaintracking.entities.Account;
+import com.pgsintl.supplychaintracking.Dto.AccountLoginDto;
+import com.pgsintl.supplychaintracking.Entities.Account;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;

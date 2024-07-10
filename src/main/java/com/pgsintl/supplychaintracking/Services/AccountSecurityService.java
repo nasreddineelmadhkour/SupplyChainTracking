@@ -1,13 +1,11 @@
-package com.pgsintl.supplychaintracking.services;
+package com.pgsintl.supplychaintracking.Services;
 
-import com.pgsintl.supplychaintracking.dto.AccountDetails;
-import com.pgsintl.supplychaintracking.dto.AccountLoginDto;
-import com.pgsintl.supplychaintracking.entities.Account;
-import com.pgsintl.supplychaintracking.repository.AccountRepository;
+import com.pgsintl.supplychaintracking.Dto.AccountDetails;
+import com.pgsintl.supplychaintracking.Dto.AccountLoginDto;
+import com.pgsintl.supplychaintracking.Entities.Account;
+import com.pgsintl.supplychaintracking.Repository.AccountRepository;
 
-import com.pgsintl.supplychaintracking.utils.ImageUtils;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
+import com.pgsintl.supplychaintracking.Utils.ImageUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

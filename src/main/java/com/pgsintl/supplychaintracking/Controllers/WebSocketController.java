@@ -1,9 +1,8 @@
-package com.pgsintl.supplychaintracking.controllers;
+package com.pgsintl.supplychaintracking.Controllers;
 
-import com.pgsintl.supplychaintracking.dto.OrdersTrackingDto;
-import com.pgsintl.supplychaintracking.repository.OrdersRepository;
-import com.pgsintl.supplychaintracking.services.OrdersIService;
-import lombok.AllArgsConstructor;
+import com.pgsintl.supplychaintracking.Dto.OrdersTrackingDto;
+import com.pgsintl.supplychaintracking.Repository.OrdersRepository;
+import com.pgsintl.supplychaintracking.Services.OrdersIService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.DestinationVariable;

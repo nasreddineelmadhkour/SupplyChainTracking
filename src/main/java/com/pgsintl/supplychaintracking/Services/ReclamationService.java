@@ -1,9 +1,9 @@
-package com.pgsintl.supplychaintracking.services;
+package com.pgsintl.supplychaintracking.Services;
 
-import com.pgsintl.supplychaintracking.entities.Orders;
-import com.pgsintl.supplychaintracking.entities.Reclamation;
-import com.pgsintl.supplychaintracking.repository.OrdersRepository;
-import com.pgsintl.supplychaintracking.repository.ReclamationRepository;
+import com.pgsintl.supplychaintracking.Entities.Orders;
+import com.pgsintl.supplychaintracking.Entities.Reclamation;
+import com.pgsintl.supplychaintracking.Repository.OrdersRepository;
+import com.pgsintl.supplychaintracking.Repository.ReclamationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

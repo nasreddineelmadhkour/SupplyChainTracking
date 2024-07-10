@@ -1,8 +1,7 @@
-package com.pgsintl.supplychaintracking.security;
+package com.pgsintl.supplychaintracking.Security;
 
-import com.pgsintl.supplychaintracking.filter.JwtFilter;
-import com.pgsintl.supplychaintracking.services.AccountSecurityService;
-import lombok.AllArgsConstructor;
+import com.pgsintl.supplychaintracking.Filter.JwtFilter;
+import com.pgsintl.supplychaintracking.Services.AccountSecurityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -60,8 +59,8 @@ public class SecurityConfig {
 
                         )
                         .permitAll()
-                       .anyRequest().authenticated())
-                //.anyRequest().permitAll())
+                //       .anyRequest().authenticated())
+                .anyRequest().permitAll())
                 .sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)

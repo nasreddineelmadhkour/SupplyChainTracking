@@ -1,6 +1,6 @@
-package com.pgsintl.supplychaintracking.dto;
+package com.pgsintl.supplychaintracking.Dto;
 
-import com.pgsintl.supplychaintracking.entities.Account;
+import com.pgsintl.supplychaintracking.Entities.Account;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

@@ -1,6 +1,6 @@
-package com.pgsintl.supplychaintracking.repository;
+package com.pgsintl.supplychaintracking.Repository;
 
-import com.pgsintl.supplychaintracking.entities.Account;
+import com.pgsintl.supplychaintracking.Entities.Account;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
