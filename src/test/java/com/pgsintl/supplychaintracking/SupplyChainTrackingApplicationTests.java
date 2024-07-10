@@ -256,7 +256,7 @@ class SupplyChainTrackingApplicationTests {
 
 
     @Test
-    public void testSaveAndFindById() {
+    void testSaveAndFindById() {
         Reclamation reclamation = Reclamation.builder()
                 .reclamationNumber(1L)
                 .description("Test Reclamation")
@@ -284,7 +284,7 @@ class SupplyChainTrackingApplicationTests {
     }
 
     @Test
-    public void testFindByStatusReclamation() {
+    void testFindByStatusReclamation() {
         // Ensure you are using the correct status
         StatusReclamation status = StatusReclamation.NOT_RESOLVED;
 
