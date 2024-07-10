@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.pgsintl</groupId>
     <artifactId>SupplyChainTracking</artifactId>
-    <version>3.9</version>
+    <version>4.0</version>
     <name>SupplyChainTracking</name>
     <description>SupplyChainTracking</description>
     <properties>
