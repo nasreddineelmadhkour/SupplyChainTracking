@@ -2,16 +2,16 @@ package com.pgsintl.supplychaintracking.Controllers;
 
 import com.pgsintl.supplychaintracking.Entities.Orders;
 import com.pgsintl.supplychaintracking.Services.OrdersIService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/orders") @CrossOrigin("*")
+@RequestMapping("/orders")
+@AllArgsConstructor
 public class OrdersController {
-    @Autowired
 
     private OrdersIService ordersIService;
 

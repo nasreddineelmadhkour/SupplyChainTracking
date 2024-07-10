@@ -203,14 +203,14 @@ public class AccountService implements AccountIService {
     }
 
     @Override
-    public Account updateProfile(Long idAccount, MultipartFile file, String name, String phoneNumber, String email, String password, String isEmail, String isPhone, String isPWD, String isPhoto, String isName) throws IOException {
+    public Account updateProfile(Long idAccount, MultipartFile file, String name, String phoneNumber, String email, String password, String isEmail, String isPhone, String isP, String isPhoto, String isName) throws IOException {
 
         Account account = accountRepository.findById(idAccount).orElse(null);
         if(account!=null){
 
             if(isEmail.equals("true"))
                 account.setEmail(email);
-            if(isPWD.equals("true"))
+            if(isP.equals("true"))
                 account.setPassword(passwordEncoder.encode(password));
             if(isPhone.equals("true"))
                 account.setPhoneNumber(phoneNumber);

@@ -5,7 +5,7 @@ import com.pgsintl.supplychaintracking.Entities.Account;
 import com.pgsintl.supplychaintracking.Entities.AuthRequest;
 import com.pgsintl.supplychaintracking.Services.AccountIService;
 import com.pgsintl.supplychaintracking.Services.AccountSecurityService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -19,16 +19,13 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/account")
-
+@AllArgsConstructor
 public class AccountController {
 
 
-    @Autowired
     private AuthenticationManager authenticationManager;
-    @Autowired
 
     private AccountIService accountIService;
-    @Autowired
 
     private AccountSecurityService accountSecurityService;
 
@@ -79,13 +76,13 @@ public class AccountController {
             ,@RequestParam("isName") String isName
             ,@RequestParam("isEmail") String isEmail
             ,@RequestParam("isPhone") String isPhone
-            ,@RequestParam("isPassword") String isPWD
+            ,@RequestParam("isPassword") String isP
             ,@RequestParam("isPhoto") String isPhoto
 
 
     ) throws IOException{
 
-        return accountIService.updateProfile(idAccount,file,name,phoneNumber,email,password,isEmail,isPhone,isPWD,isPhoto,isName);
+        return accountIService.updateProfile(idAccount,file,name,phoneNumber,email,password,isEmail,isPhone,isP,isPhoto,isName);
 
     }
 

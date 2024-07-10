@@ -1,14 +1,12 @@
 package com.pgsintl.supplychaintracking;
 
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-@SpringBootApplication
+@SpringBootApplication @AllArgsConstructor
 public class SupplyChainTrackingApplication {
-    @Autowired
     private JdbcTemplate jdbcTemplate;
     public static void main(String[] args) {
         SpringApplication.run(SupplyChainTrackingApplication.class, args);
