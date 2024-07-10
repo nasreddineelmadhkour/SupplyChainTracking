@@ -89,7 +89,116 @@ class SupplyChainTrackingApplicationTests {
         assertEquals(mockOrdersList, result);
     }
 
-    // Additional tests can be added for other methods similarly
+        @Test
+    void testUpdatePosition() {
+        // Mock data
+        Long orderId = 1L;
+        Orders existingOrder = new Orders();
+        existingOrder.setOrdersNumber(orderId);
+        existingOrder.setOrdersNowLat(0.0);
+        existingOrder.setOrdersNowLong(0.0);
+
+        OrdersTrackingDto ordersTrackingDto = new OrdersTrackingDto();
+        ordersTrackingDto.setIdOrders(orderId);
+        ordersTrackingDto.setOrdersNowLat(10.0);
+        ordersTrackingDto.setOrdersNowLong(20.0);
+
+        // Mock repository behavior
+        when(ordersRepository.findById(orderId)).thenReturn(Optional.of(existingOrder));
+        when(ordersRepository.save(any(Orders.class))).thenReturn(existingOrder);
+
+        // Perform service method
+        ordersService.updatePosition(ordersTrackingDto);
+
+        // Verify interactions and assertions
+        verify(ordersRepository, times(1)).findById(orderId);
+        verify(ordersRepository, times(1)).save(existingOrder);
+        assertEquals(10.0, existingOrder.getOrdersNowLat());
+        assertEquals(20.0, existingOrder.getOrdersNowLong());
+    }
+
+
+    @Test
+    void testUpdateOrders() {
+        // Mock data
+        Long orderId = 1L;
+        Orders existingOrder = new Orders();
+        existingOrder.setOrdersNumber(orderId);
+        existingOrder.setArrivalLat(0.0);
+        existingOrder.setArrivalLong(0.0);
+
+        Orders updatedOrder = new Orders();
+        updatedOrder.setOrdersNumber(orderId);
+        updatedOrder.setArrivalLat(30.445);
+        updatedOrder.setArrivalLong(650.22);
+        updatedOrder.setStartingPoint("Makther");
+        updatedOrder.setArrivalPoint("Manouba");
+        updatedOrder.setDistance("169 KM");
+        updatedOrder.setEstimation("2 H 30 MIN");
+        updatedOrder.setWeightOrders(40000);
+        updatedOrder.setUnitProduct("kg");
+        updatedOrder.setProductOrders("Gasoline");
+        updatedOrder.setStatus(StatusOrders.IN_PROGRESS);
+        updatedOrder.setDateOrders(new Date());
+        updatedOrder.setDateFinOrders(new Date());
+
+        Long idCarrier = 1L;
+        Long idDriver = 2L;
+        Account mockCarrier = new Account();
+        mockCarrier.setUserNumber(idCarrier);
+        Account mockDriver = new Account();
+        mockDriver.setUserNumber(idDriver);
+
+        // Mock repository behavior
+        when(accountRepository.findById(idCarrier)).thenReturn(Optional.of(mockCarrier));
+        when(accountRepository.findById(idDriver)).thenReturn(Optional.of(mockDriver));
+        when(ordersRepository.findById(orderId)).thenReturn(Optional.of(existingOrder));
+        when(ordersRepository.save(any(Orders.class))).thenReturn(updatedOrder);
+
+        // Set carrier and driver in the updated order
+        updatedOrder.setDriver(mockDriver);
+        updatedOrder.setCarrier(mockCarrier);
+
+        // Perform service method
+        Orders result = ordersService.updateOrders(orderId, updatedOrder);
+
+        // Verify interactions and assertions
+        verify(ordersRepository, times(1)).findById(orderId);
+        verify(ordersRepository, times(1)).save(any(Orders.class));
+        assertEquals(updatedOrder.getArrivalLat(), result.getArrivalLat());
+        assertEquals(updatedOrder.getArrivalLong(), result.getArrivalLong());
+        assertEquals(updatedOrder.getStartingPoint(), result.getStartingPoint());
+        assertEquals(updatedOrder.getArrivalPoint(), result.getArrivalPoint());
+        assertEquals(updatedOrder.getDistance(), result.getDistance());
+        assertEquals(updatedOrder.getEstimation(), result.getEstimation());
+        assertEquals(updatedOrder.getWeightOrders(), result.getWeightOrders());
+        assertEquals(updatedOrder.getUnitProduct(), result.getUnitProduct());
+        assertEquals(updatedOrder.getProductOrders(), result.getProductOrders());
+        assertEquals(updatedOrder.getStatus(), result.getStatus());
+        assertEquals(updatedOrder.getDateOrders(), result.getDateOrders());
+        assertEquals(updatedOrder.getDateFinOrders(), result.getDateFinOrders());
+    }
+
+    @Test
+    void testDeleteOrder() {
+        // Mock data
+        Long orderId = 1L;
+        Orders mockOrder = new Orders();
+        mockOrder.setOrdersNumber(orderId);
+
+        // Mock repository behavior
+        when(ordersRepository.findById(orderId)).thenReturn(Optional.of(mockOrder));
+        doNothing().when(ordersRepository).deleteById(orderId);
+
+        // Perform service method
+        boolean result = ordersService.deleteOrders(orderId);
+
+        // Verify interactions and assertions
+        verify(ordersRepository, times(1)).findById(orderId);
+        verify(ordersRepository, times(1)).deleteById(orderId);
+        assertTrue(result);
+    }
+
 
 
 
