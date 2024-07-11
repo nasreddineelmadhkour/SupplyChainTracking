@@ -11,6 +11,7 @@ import jakarta.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -21,11 +22,12 @@ import java.util.*;
 
 @Service
 @Slf4j
-@AllArgsConstructor
 public class AccountService implements AccountIService {
 
+    @Autowired
     private AccountRepository accountRepository;
 
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
 

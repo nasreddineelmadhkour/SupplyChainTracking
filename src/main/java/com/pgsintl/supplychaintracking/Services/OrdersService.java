@@ -13,13 +13,13 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 
-@Service @AllArgsConstructor
+@Service
 public class OrdersService implements OrdersIService {
-
+    @Autowired
     OrdersRepository ordersRepository;
-
+    @Autowired
     ReclamationRepository reclamationRepository;
-
+    @Autowired
     AccountRepository accountRepository;
     @Override
     public Orders addOrder(Orders orders, Long idCarrier, Long idDriver) {
