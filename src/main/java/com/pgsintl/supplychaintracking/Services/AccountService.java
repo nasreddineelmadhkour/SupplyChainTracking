@@ -29,15 +29,7 @@ public class AccountService implements AccountIService {
 
     private PasswordEncoder passwordEncoder;
 
-    private TwilioConfig twilioConfig;
-
     private SecureRandom random = new SecureRandom();
-
-/*
-    @PostConstruct
-    public void initTwilio(){
-        Twilio.init(twilioConfig.getAccountSid(),twilioConfig.getAuTo());
-    }*/
 
     @Override
     public Account creatAccountCarrier(Account carrier)
@@ -54,27 +46,27 @@ public class AccountService implements AccountIService {
     @Override
     public Account creatAccountDriver(String name, String password , String email, String cardNumber , String serialNumber , String phoneNumber, MultipartFile file, Long idCarrier)throws IOException {
 
-        Account driver = new Account();
-        driver.setPhoneNumber(phoneNumber);
-        driver.setName(name);
-        driver.setEmail(email);
-        driver.setCardNumber(cardNumber);
-        driver.setSerialNumber(serialNumber);
-        driver.setRole(Role.DRIVER);
-        driver.setPassword(passwordEncoder.encode(password));
-        driver.setDatecreation(new Date(System.currentTimeMillis()));
+        Account newdriver = new Account();
+        newdriver.setPhoneNumber(phoneNumber);
+        newdriver.setName(name);
+        newdriver.setEmail(email);
+        newdriver.setCardNumber(cardNumber);
+        newdriver.setSerialNumber(serialNumber);
+        newdriver.setRole(Role.DRIVER);
+        newdriver.setPassword(passwordEncoder.encode(password));
+        newdriver.setDatecreation(new Date(System.currentTimeMillis()));
 
-        driver.setNamePhoto(file.getOriginalFilename());
-        driver.setTypePhoto(file.getContentType());
-        driver.setPhoto(ImageUtils.compressImage(file.getBytes()));
+        newdriver.setNamePhoto(file.getOriginalFilename());
+        newdriver.setTypePhoto(file.getContentType());
+        newdriver.setPhoto(ImageUtils.compressImage(file.getBytes()));
 
         Account carrier = accountRepository.findById(idCarrier).orElse(null);
 
         assert carrier != null;
-        carrier.getDrivers().add(driver);
+        carrier.getDrivers().add(newdriver);
 
 
-        return accountRepository.save(driver);
+        return accountRepository.save(newdriver);
     }
 
 

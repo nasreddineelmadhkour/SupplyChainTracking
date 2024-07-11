@@ -7,20 +7,18 @@ import com.pgsintl.supplychaintracking.Entities.StatusOrders;
 import com.pgsintl.supplychaintracking.Repository.AccountRepository;
 import com.pgsintl.supplychaintracking.Repository.OrdersRepository;
 import com.pgsintl.supplychaintracking.Repository.ReclamationRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 
-@Service
+@Service @AllArgsConstructor
 public class OrdersService implements OrdersIService {
-    @Autowired
 
     OrdersRepository ordersRepository;
-    @Autowired
 
     ReclamationRepository reclamationRepository;
-    @Autowired
 
     AccountRepository accountRepository;
     @Override
