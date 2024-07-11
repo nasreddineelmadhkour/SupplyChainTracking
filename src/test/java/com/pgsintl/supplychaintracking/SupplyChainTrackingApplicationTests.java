@@ -1,5 +1,6 @@
 package com.pgsintl.supplychaintracking;
 
+import com.pgsintl.supplychaintracking.Dto.AccountLoginDto;
 import com.pgsintl.supplychaintracking.Dto.OrdersTrackingDto;
 import com.pgsintl.supplychaintracking.Entities.*;
 import com.pgsintl.supplychaintracking.Repository.AccountRepository;
@@ -14,7 +15,9 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -38,41 +41,177 @@ class SupplyChainTrackingApplicationTests {
     private AccountRepository accountRepository;
 
     private Account carrier;
-
+    private Account driver;
+    @Mock
+    private MultipartFile file;
+    @Mock
+    private MultipartFile multipartFile;
     @InjectMocks
     private OrdersService ordersService;
+    private Account account;
 
     @BeforeEach
     public void setup() {
         MockitoAnnotations.initMocks(this);
         reclamationRepository.deleteAll();
-
+        account = new Account();
+        account.setUserNumber(1L);
+        account.setName("John Doe");
+        account.setPassword("password");
+        account.setRole(Role.CARRIER);
     }
 
 
     // Tests for Account
+    @Test
+    void testCreateAccountCarrier() {
+        when(passwordEncoder.encode(any(String.class))).thenReturn("encodedPassword");
+        when(accountRepository.save(any(Account.class))).thenReturn(account);
+
+        Account savedAccount = accountService.creatAccountCarrier(account);
+
+        assertEquals(Role.CARRIER, savedAccount.getRole());
+        assertEquals("encodedPassword", savedAccount.getPassword());
+        assertNotNull(savedAccount.getDatecreation());
+        verify(accountRepository, times(1)).save(account);
+    }
 
     @Test
-    void testCreatAccountCarrier() {
-        carrier = new Account();
-        carrier.setUserNumber(1L);
-        carrier.setPhoneNumber("11223366");
-        carrier.setPassword("plainPassword");
-        // Mock password encoding
-        when(passwordEncoder.encode(carrier.getPassword())).thenReturn("encodedPassword");
+    void testCreateAccountDriver() throws IOException {
+        Account carrier = new Account();
+        carrier.setUserNumber(2L);
+        carrier.setDrivers(new ArrayList<>());
 
-        // Mock repository save method
-        when(accountRepository.save(any(Account.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(accountRepository.findById(2L)).thenReturn(Optional.of(carrier));
+        when(passwordEncoder.encode(any(String.class))).thenReturn("encodedPassword");
+        when(multipartFile.getOriginalFilename()).thenReturn("photo.jpg");
+        when(multipartFile.getContentType()).thenReturn("image/jpeg");
+        when(multipartFile.getBytes()).thenReturn(new byte[10]);
+        when(accountRepository.save(any(Account.class))).thenReturn(account);
 
-        // Call the service method
-        Account createdCarrier = accountService.creatAccountCarrier(carrier);
+        Account savedAccount = accountService.creatAccountDriver("Driver", "password", "driver@example.com", "1234", "5678", "1234567890", multipartFile, 2L);
 
-        // Assertions
-        assertEquals(Role.CARRIER, createdCarrier.getRole());
-        assertEquals("encodedPassword", createdCarrier.getPassword());
-        assertEquals(carrier.getPhoneNumber(), createdCarrier.getPhoneNumber());
-        assertEquals(carrier.getUserNumber(), createdCarrier.getUserNumber());
-        assertEquals(carrier.getDatecreation().getTime(), createdCarrier.getDatecreation().getTime(), 1000); // Allowing 1-second difference
+        assertEquals(Role.DRIVER, savedAccount.getRole());
+        assertEquals("encodedPassword", savedAccount.getPassword());
+        assertNotNull(savedAccount.getDatecreation());
+        assertEquals("photo.jpg", savedAccount.getNamePhoto());
+        assertEquals("image/jpeg", savedAccount.getTypePhoto());
+        assertEquals(carrier.getDrivers().size(), 1);
+        verify(accountRepository, times(1)).save(savedAccount);
+    }
+
+    @Test
+    void testGetAllUser() {
+        Account account = new Account();
+        account.setPhoto(new byte[10]);
+        List<Account> accounts = Collections.singletonList(account);
+        when(accountRepository.findAll()).thenReturn(accounts);
+
+        List<AccountLoginDto> accountLoginDtos = accountService.getAllUser();
+
+        assertEquals(1, accountLoginDtos.size());
+        verify(accountRepository, times(1)).findAll();
+    }
+
+    @Test
+    void testGetAllDriverByCarrier() {
+        Account carrier = new Account();
+        carrier.setDrivers(new ArrayList<>());
+        Account driver = new Account();
+        driver.setPhoto(new byte[10]);
+        carrier.getDrivers().add(driver);
+
+        when(accountRepository.findById(1L)).thenReturn(Optional.of(carrier));
+
+        List<Account> drivers = accountService.getAllDriverByCarrier(1L);
+
+        assertEquals(1, drivers.size());
+        verify(accountRepository, times(1)).findById(1L);
+    }
+
+    @Test
+    void testSetAllNoPDP() throws IOException {
+        when(multipartFile.getOriginalFilename()).thenReturn("photo.jpg");
+        when(multipartFile.getContentType()).thenReturn("image/jpeg");
+        when(multipartFile.getBytes()).thenReturn(new byte[10]);
+        List<Account> accounts = new ArrayList<>();
+        accounts.add(account);
+        when(accountRepository.findAll()).thenReturn(accounts);
+
+        boolean result = accountService.setAllNoPDP(multipartFile);
+
+        assertTrue(result);
+        verify(accountRepository, times(1)).findAll();
+        verify(accountRepository, times(1)).save(account);
+    }
+
+    @Test
+    void testSendCodeReset() {
+        when(accountRepository.findByPhoneNumber(any(String.class))).thenReturn(Optional.of(account));
+        doAnswer(invocation -> {
+            account.setCodeTel("123456");
+            return null;
+        }).when(accountRepository).save(any(Account.class));
+
+        boolean result = accountService.sendCodeReset("1234567890");
+
+        assertTrue(result);
+        assertEquals("123456", account.getCodeTel());
+        verify(accountRepository, times(1)).save(account);
+    }
+
+    @Test
+    void testVerifyCode() {
+        account.setCodeTel("123456");
+        when(accountRepository.findByPhoneNumber(any(String.class))).thenReturn(Optional.of(account));
+
+        boolean result = accountService.verifyCode("123456", "1234567890");
+
+        assertTrue(result);
+        assertNull(account.getCodeTel());
+        verify(accountRepository, times(1)).save(account);
+    }
+
+    @Test
+    void testChangePasswordAfterVerification() {
+        when(accountRepository.findByPhoneNumber(any(String.class))).thenReturn(Optional.of(account));
+        when(passwordEncoder.encode(any(String.class))).thenReturn("newEncodedPassword");
+
+        boolean result = accountService.changePasswordAfterVerification("newPassword", "1234567890");
+
+        assertTrue(result);
+        assertEquals("newEncodedPassword", account.getPassword());
+        verify(accountRepository, times(1)).save(account);
+    }
+
+    @Test
+    void testDeleteDriver() {
+        doNothing().when(accountRepository).deleteById(1L);
+
+        boolean result = accountService.deleteDriver(1L);
+
+        assertTrue(result);
+        verify(accountRepository, times(1)).deleteById(1L);
+    }
+
+    @Test
+    void testUpdateProfile() throws IOException {
+        account.setPhoto(new byte[10]);
+        when(accountRepository.findById(any(Long.class))).thenReturn(Optional.of(account));
+        when(multipartFile.getOriginalFilename()).thenReturn("photo.jpg");
+        when(multipartFile.getContentType()).thenReturn("image/jpeg");
+        when(multipartFile.getBytes()).thenReturn(new byte[10]);
+        when(passwordEncoder.encode(any(String.class))).thenReturn("encodedPassword");
+        when(accountRepository.save(any(Account.class))).thenReturn(account);
+
+        Account updatedAccount = accountService.updateProfile(1L, multipartFile, "New Name", "1234567890", "new@example.com", "newPassword", "true", "true", "true", "true", "true");
+
+        assertEquals("New Name", updatedAccount.getName());
+        assertEquals("1234567890", updatedAccount.getPhoneNumber());
+        assertEquals("new@example.com", updatedAccount.getEmail());
+        assertEquals("encodedPassword", updatedAccount.getPassword());
+        assertEquals("photo.jpg", updatedAccount.getNamePhoto());
+        verify(accountRepository, times(2)).save(account);
     }
 
 

@@ -22,14 +22,14 @@ import java.util.*;
 @Service
 @Slf4j
 @AllArgsConstructor
-@NoArgsConstructor
 public class AccountService implements AccountIService {
 
     private AccountRepository accountRepository;
 
     private PasswordEncoder passwordEncoder;
 
-    private SecureRandom random = new SecureRandom();
+
+
 
     @Override
     public Account creatAccountCarrier(Account carrier)
@@ -133,14 +133,15 @@ public class AccountService implements AccountIService {
     @Override
     public boolean sendCodeReset(String identity) {
 
-        Account account = accountRepository.findByPhoneNumber(identity).orElse(null);
 
-        if(account!= null){
+        Optional<Account> account = accountRepository.findByPhoneNumber(identity);
 
-            account.setCodeTel(String.valueOf(generateCode()));
-            log.info(account.getCodeTel());
-            accountRepository.save(account);
-            String m = "Your Code verification code is: "+account.getCodeTel();
+        if(account.isPresent()){
+            Account account1 = account.get();
+            account1.setCodeTel(String.valueOf(generateCode()));
+            log.info(account1.getCodeTel());
+            accountRepository.save(account1);
+            String m = "Your Code verification code is: "+account1.getCodeTel();
             log.info(m);
             return true;
         }
@@ -148,6 +149,7 @@ public class AccountService implements AccountIService {
     }
 
     public int generateCode(){
+        SecureRandom random = new SecureRandom();
         return 100000 + random.nextInt(999999 - 100000);
 
     }
