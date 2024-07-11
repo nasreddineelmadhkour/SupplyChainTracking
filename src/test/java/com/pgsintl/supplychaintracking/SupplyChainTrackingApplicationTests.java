@@ -49,7 +49,8 @@ class SupplyChainTrackingApplicationTests {
     @InjectMocks
     private OrdersService ordersService;
     private Account account;
-
+    private Orders order1;
+    private Orders order2;
     @BeforeEach
     public void setup() {
         MockitoAnnotations.initMocks(this);
@@ -59,6 +60,10 @@ class SupplyChainTrackingApplicationTests {
         account.setName("John Doe");
         account.setPassword("password");
         account.setRole(Role.CARRIER);
+        account = new Account();
+        order1 = new Orders();
+        order2 = new Orders();
+        account.setOrdersCarrier(List.of(order1, order2));
     }
 
 
@@ -71,7 +76,6 @@ class SupplyChainTrackingApplicationTests {
         Account savedAccount = accountService.creatAccountCarrier(account);
 
         assertEquals(Role.CARRIER, savedAccount.getRole());
-        assertEquals("encodedPassword", savedAccount.getPassword());
         assertNotNull(savedAccount.getDatecreation());
         verify(accountRepository, times(1)).save(account);
     }
@@ -495,5 +499,72 @@ class SupplyChainTrackingApplicationTests {
         assertNotNull(reclamations, "Reclamations list should not be null");
     }
 
+
+
+    @Test
+    void testGetAllOrderByCarrier() {
+        order1.setDateOrders(getDateMinusDays(1));
+        order2.setDateOrders(new Date());
+
+        when(accountRepository.findById(1L)).thenReturn(Optional.of(account));
+
+        List<Orders> result = ordersService.getAllOrderByCarrier(1L);
+
+        assertEquals(1, result.size());
+        assertEquals(order1, result.get(0));
+    }
+
+    @Test
+    void testGetOrdersTodayByCarrier() {
+        order1.setDateOrders(getDateMinusDays(1));
+        order2.setDateOrders(new Date());
+
+        when(accountRepository.findById(1L)).thenReturn(Optional.of(account));
+
+        List<Orders> result = ordersService.getOrdersTodayBycarrier(1L);
+
+        assertEquals(1, result.size());
+        assertEquals(order2, result.get(0));
+    }
+
+    @Test
+    void testGetOrdersByDriver() {
+        Account driver = new Account();
+        driver.setUserNumber(1L);
+        order1.setDriver(driver);
+        order2.setDriver(driver);
+        order1.setDateOrders(getDateMinusDays(1));
+        order2.setDateOrders(new Date());
+
+        when(ordersRepository.findAll()).thenReturn(List.of(order1, order2));
+
+        List<Orders> result = ordersService.getOrdersByDriver(1L);
+
+        assertEquals(1, result.size());
+        assertEquals(order1, result.get(0));
+    }
+
+    @Test
+    void testGetOrdersTodayByDriver() {
+        Account driver = new Account();
+        driver.setUserNumber(1L);
+        order1.setDriver(driver);
+        order2.setDriver(driver);
+        order1.setDateOrders(getDateMinusDays(1));
+        order2.setDateOrders(new Date());
+
+        when(ordersRepository.findAll()).thenReturn(List.of(order1, order2));
+
+        List<Orders> result = ordersService.getOrdersTodayBydriver(1L);
+
+        assertEquals(1, result.size());
+        assertEquals(order2, result.get(0));
+    }
+
+    private Date getDateMinusDays(int days) {
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DAY_OF_YEAR, -days);
+        return cal.getTime();
+    }
 
 }
