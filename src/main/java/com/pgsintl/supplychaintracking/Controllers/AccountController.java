@@ -7,6 +7,7 @@ import com.pgsintl.supplychaintracking.Services.AccountIService;
 import com.pgsintl.supplychaintracking.Services.AccountSecurityService;
 import lombok.AllArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -35,7 +36,7 @@ public class AccountController {
         if(authenticate.isAuthenticated()){
             return accountSecurityService.loginSucces(authRequest.getUsername());
         }else {
-            throw new UsernameNotFoundException("Invalid user request");
+            throw new BadCredentialsException("Bad credentials");
         }
     }
 
