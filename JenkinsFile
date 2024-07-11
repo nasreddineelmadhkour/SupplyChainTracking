@@ -2,7 +2,7 @@ pipeline {
     agent any
     
     environment {
-        dockerImage = 'supplychaintracking:3.8.0'
+        dockerImage = 'supplychaintracking:4.1.0'
         dockerUsername = 'nasreddine007'
         dockerPassword = 'PwdDockerToken'
     }
