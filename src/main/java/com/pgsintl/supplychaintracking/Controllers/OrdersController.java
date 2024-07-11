@@ -3,6 +3,7 @@ package com.pgsintl.supplychaintracking.Controllers;
 import com.pgsintl.supplychaintracking.Entities.Orders;
 import com.pgsintl.supplychaintracking.Services.OrdersIService;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -64,5 +65,9 @@ public class OrdersController {
     public void startingOrders(@PathVariable Long idOrders){
         ordersIService.startingOrders(idOrders);
     }
-
+    @PostMapping("/completedOrders/{idOrders}")
+    @PreAuthorize("hasAuthority('DRIVER')")
+    public void completedOrders(@PathVariable Long idOrders){
+        ordersIService.completedOrders(idOrders);
+    }
 }

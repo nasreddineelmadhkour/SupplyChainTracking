@@ -14,13 +14,11 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 
 @Service
+@AllArgsConstructor
 public class OrdersService implements OrdersIService {
-    @Autowired
-    OrdersRepository ordersRepository;
-    @Autowired
-    ReclamationRepository reclamationRepository;
-    @Autowired
-    AccountRepository accountRepository;
+    private  OrdersRepository ordersRepository;
+    private  ReclamationRepository reclamationRepository;
+    private  AccountRepository accountRepository;
     @Override
     public Orders addOrder(Orders orders, Long idCarrier, Long idDriver) {
         Account carrier = accountRepository.findById(idCarrier).orElse(null);
@@ -226,6 +224,14 @@ public class OrdersService implements OrdersIService {
         }
     }
 
+    @Override
+    public void completedOrders(Long idOrders) {
+            Orders orders = ordersRepository.findById(idOrders).orElse(null);
+            if(orders!=null){
+                orders.setStatus(StatusOrders.COMPLETED);
+                ordersRepository.save(orders);
+            }
+    }
 
 
 }

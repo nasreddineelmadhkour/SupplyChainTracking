@@ -6,7 +6,7 @@ import com.pgsintl.supplychaintracking.Entities.Orders;
 import java.util.List;
 
 public interface OrdersIService {
-    public Orders addOrder(Orders orders, Long idCarrier, Long idDriver) ;
+    Orders addOrder(Orders orders, Long idCarrier, Long idDriver) ;
 
     List<Orders> getAllOrders();
 
@@ -18,11 +18,13 @@ public interface OrdersIService {
 
     List<Orders> getOrdersTodayBydriver(Long idDriver);
 
-    public void updatePosition(OrdersTrackingDto ordersTrackingDto);
+    void updatePosition(OrdersTrackingDto ordersTrackingDto);
 
-    public void startingOrders(Long idOrders);
+    void startingOrders(Long idOrders);
 
-    public boolean deleteOrders(Long idOrders);
+    boolean deleteOrders(Long idOrders);
 
     Orders updateOrders(Long orderId, Orders updatedOrders);
+
+    void completedOrders(Long idOrders);
 }

@@ -3,6 +3,7 @@ package com.pgsintl.supplychaintracking.Security;
 import com.pgsintl.supplychaintracking.Filter.JwtFilter;
 import com.pgsintl.supplychaintracking.Services.AccountSecurityService;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -27,9 +28,10 @@ import java.util.Arrays;
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
-@AllArgsConstructor
+
 public class SecurityConfig {
 
+    @Autowired
     private JwtFilter jwtFilter;
     @Bean
     public UserDetailsService userDetailsService(){
