@@ -229,6 +229,7 @@ public class OrdersService implements OrdersIService {
             Orders orders = ordersRepository.findById(idOrders).orElse(null);
             if(orders!=null){
                 orders.setStatus(StatusOrders.COMPLETED);
+                orders.setDateFinOrders(new Date());
                 ordersRepository.save(orders);
             }
     }
