@@ -23,7 +23,7 @@ import static org.mockito.Mockito.*;
 @SpringBootTest
 class SupplyChainTrackingApplicationTests {
 
-    @Mock
+    @InjectMocks
     private AccountService accountService;
 
     @Mock
@@ -37,6 +37,8 @@ class SupplyChainTrackingApplicationTests {
     @Mock
     private AccountRepository accountRepository;
 
+    private Account carrier;
+
     @InjectMocks
     private OrdersService ordersService;
 
@@ -46,6 +48,34 @@ class SupplyChainTrackingApplicationTests {
         reclamationRepository.deleteAll();
 
     }
+
+
+    // Tests for Account
+
+    @Test
+    void testCreatAccountCarrier() {
+        carrier = new Account();
+        carrier.setUserNumber(1L);
+        carrier.setPhoneNumber("11223366");
+        carrier.setPassword("plainPassword");
+        // Mock password encoding
+        when(passwordEncoder.encode(carrier.getPassword())).thenReturn("encodedPassword");
+
+        // Mock repository save method
+        when(accountRepository.save(any(Account.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        // Call the service method
+        Account createdCarrier = accountService.creatAccountCarrier(carrier);
+
+        // Assertions
+        assertEquals(Role.CARRIER, createdCarrier.getRole());
+        assertEquals("encodedPassword", createdCarrier.getPassword());
+        assertEquals(carrier.getPhoneNumber(), createdCarrier.getPhoneNumber());
+        assertEquals(carrier.getUserNumber(), createdCarrier.getUserNumber());
+        assertEquals(carrier.getDatecreation().getTime(), createdCarrier.getDatecreation().getTime(), 1000); // Allowing 1-second difference
+    }
+
+
 
     // Tests for addOrder method
 
@@ -88,6 +118,12 @@ class SupplyChainTrackingApplicationTests {
         verify(ordersRepository, times(1)).save(any(Orders.class));
         assertEquals(1L, result.getOrdersNumber());
     }
+
+
+
+
+
+
 
     // Tests for getAllOrders method
 
