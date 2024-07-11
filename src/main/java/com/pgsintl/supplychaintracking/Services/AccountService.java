@@ -148,15 +148,10 @@ public class AccountService implements AccountIService {
             account.setCodeTel(String.valueOf(generateCode()));
             log.info(account.getCodeTel());
             accountRepository.save(account);
-
-           // PhoneNumber to = new PhoneNumber("+21628000046");PhoneNumber from = new PhoneNumber(twilioConfig.getTrialNumber());
             String m = "Your Code verification code is: "+account.getCodeTel();
             log.info(m);
-            //Message message = Message     .creator(to,from,m).create();
-
             return true;
         }
-
         return false;
     }
 
