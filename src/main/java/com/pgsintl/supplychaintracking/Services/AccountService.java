@@ -16,10 +16,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Random;
+import java.security.SecureRandom;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -33,7 +31,7 @@ public class AccountService implements AccountIService {
 
     private TwilioConfig twilioConfig;
 
-    private Random random = new Random();
+    private SecureRandom random = new SecureRandom();
 
 /*
     @PostConstruct
@@ -96,8 +94,6 @@ public class AccountService implements AccountIService {
             accountdto.setEmail(account.getEmail());
 
             accounts.add(accountdto);
-//            accounts.add();
-      //      account.setPhoto(images);
         }
         return accounts;
     }
@@ -106,14 +102,24 @@ public class AccountService implements AccountIService {
     public List<Account> getAllDriverByCarrier(Long idCarrier) {
         List<Account> accounts = new ArrayList<>();
 
-        for (Account account : accountRepository.findById(idCarrier).get().getDrivers().stream().toList()){
-            byte[] images= ImageUtils.decompressImage(account.getPhoto());
-            account.setPhoto(images);
-            accounts.add(account);
+        Optional<Account> optionalCarrierAccount = accountRepository.findById(idCarrier);
+
+        if (optionalCarrierAccount.isPresent()) {
+            Account carrierAccount = optionalCarrierAccount.get();
+
+            for (Account account : carrierAccount.getDrivers()) {
+                byte[] images = ImageUtils.decompressImage(account.getPhoto());
+                account.setPhoto(images);
+                accounts.add(account);
+            }
+        } else {
+
+            log.info("Carrier account with ID " + idCarrier + " not found.");
         }
 
         return accounts;
     }
+
 
 
 
@@ -143,18 +149,13 @@ public class AccountService implements AccountIService {
             log.info(account.getCodeTel());
             accountRepository.save(account);
 
-           // PhoneNumber to = new PhoneNumber("+21628000046");
-            //PhoneNumber from = new PhoneNumber(twilioConfig.getTrialNumber());
+           // PhoneNumber to = new PhoneNumber("+21628000046");PhoneNumber from = new PhoneNumber(twilioConfig.getTrialNumber());
             String m = "Your Code verification code is: "+account.getCodeTel();
             log.info(m);
-            //Message message = Message
-              //         .creator(to,from,m).create();
+            //Message message = Message     .creator(to,from,m).create();
 
             return true;
-        }/*
-        if(account!=null){
-            return true;
-        }*/
+        }
 
         return false;
     }
