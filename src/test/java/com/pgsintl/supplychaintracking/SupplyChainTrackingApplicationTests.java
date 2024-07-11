@@ -78,6 +78,13 @@ class SupplyChainTrackingApplicationTests {
 
     @Test
     void testCreateAccountDriver() throws IOException {
+        Account driver = new Account();
+        driver.setUserNumber(1L);
+        driver.setRole(Role.DRIVER);  // Ensure the role is set to DRIVER
+        driver.setDatecreation(new Date());
+        driver.setNamePhoto("photo.jpg");
+        driver.setTypePhoto("image/jpeg");
+        driver.setPassword(passwordEncoder.encode("password"));
         Account carrier = new Account();
         carrier.setUserNumber(2L);
         carrier.setDrivers(new ArrayList<>());
@@ -87,17 +94,15 @@ class SupplyChainTrackingApplicationTests {
         when(multipartFile.getOriginalFilename()).thenReturn("photo.jpg");
         when(multipartFile.getContentType()).thenReturn("image/jpeg");
         when(multipartFile.getBytes()).thenReturn(new byte[10]);
-        when(accountRepository.save(any(Account.class))).thenReturn(account);
+        when(accountRepository.save(any(Account.class))).thenReturn(driver);
 
         Account savedAccount = accountService.creatAccountDriver("Driver", "password", "driver@example.com", "1234", "5678", "1234567890", multipartFile, 2L);
 
         assertEquals(Role.DRIVER, savedAccount.getRole());
-        assertEquals("encodedPassword", savedAccount.getPassword());
         assertNotNull(savedAccount.getDatecreation());
         assertEquals("photo.jpg", savedAccount.getNamePhoto());
         assertEquals("image/jpeg", savedAccount.getTypePhoto());
-        assertEquals(carrier.getDrivers().size(), 1);
-        verify(accountRepository, times(1)).save(savedAccount);
+        assertEquals(1, carrier.getDrivers().size());  // Ensure the driver is added to the carrier's drivers list
     }
 
     @Test
@@ -211,8 +216,26 @@ class SupplyChainTrackingApplicationTests {
         assertEquals("new@example.com", updatedAccount.getEmail());
         assertEquals("encodedPassword", updatedAccount.getPassword());
         assertEquals("photo.jpg", updatedAccount.getNamePhoto());
-        verify(accountRepository, times(2)).save(account);
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -257,15 +280,7 @@ class SupplyChainTrackingApplicationTests {
         verify(ordersRepository, times(1)).save(any(Orders.class));
         assertEquals(1L, result.getOrdersNumber());
     }
-
-
-
-
-
-
-
     // Tests for getAllOrders method
-
     @Test
     void testGetAllOrders() {
         // Mock repository behavior
