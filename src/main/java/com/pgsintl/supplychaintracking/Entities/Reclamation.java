@@ -24,7 +24,7 @@ public class Reclamation implements Serializable {
 
     @Column(nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
-    private Date dateReclamation = new Date();
+    private Date dateReclamation;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
