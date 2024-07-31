@@ -48,34 +48,6 @@ public class OrdersService implements OrdersIService {
     public List<Orders> getAllOrderByCarrier(Long idCarrier) {
 
         return ordersRepository.findByReclamationIsNotNullAndCarrierUserNumber(idCarrier);
-      /*  List<Orders> ordersList = new ArrayList<>();
-        Optional<Account> optionalAccount = accountRepository.findById(idCarrier);
-        if (optionalAccount.isPresent()) {
-            Account account = optionalAccount.get();
-            for (Orders orders1 : account.getOrdersCarrier()) {
-                Calendar cal1 = Calendar.getInstance();
-                cal1.setTime(orders1.getDateOrders());
-                cal1.set(Calendar.HOUR_OF_DAY, 0);
-                cal1.set(Calendar.MINUTE, 0);
-                cal1.set(Calendar.SECOND, 0);
-                cal1.set(Calendar.MILLISECOND, 0);
-
-                Calendar cal2 = Calendar.getInstance();
-                cal2.setTime(new Date());
-                cal2.set(Calendar.HOUR_OF_DAY, 0);
-                cal2.set(Calendar.MINUTE, 0);
-                cal2.set(Calendar.SECOND, 0);
-                cal2.set(Calendar.MILLISECOND, 0);
-
-                if (!cal1.getTime().equals(cal2.getTime())){
-                    ordersList.add(orders1);
-
-                }
-
-            }
-        }
-
-        return ordersList;*/
     }
 
     @Override

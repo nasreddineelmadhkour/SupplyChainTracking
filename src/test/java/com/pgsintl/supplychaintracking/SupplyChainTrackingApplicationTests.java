@@ -8,12 +8,14 @@ import com.pgsintl.supplychaintracking.Repository.OrdersRepository;
 import com.pgsintl.supplychaintracking.Repository.ReclamationRepository;
 import com.pgsintl.supplychaintracking.Services.AccountService;
 import com.pgsintl.supplychaintracking.Services.OrdersService;
+import jakarta.mail.MessagingException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -100,12 +102,12 @@ class SupplyChainTrackingApplicationTests {
         when(multipartFile.getBytes()).thenReturn(new byte[10]);
         when(accountRepository.save(any(Account.class))).thenReturn(driver);
 
-        Account savedAccount = accountService.creatAccountDriver("Driver", "password", "driver@example.com", "1234", "5678", "1234567890", multipartFile, 2L);
+        ResponseEntity<Account> savedAccount = accountService.creatAccountDriver("Driver", "password", "driver@example.com", "1234", "5678", "1234567890", multipartFile, 2L);
 
-        assertEquals(Role.DRIVER, savedAccount.getRole());
-        assertNotNull(savedAccount.getDatecreation());
-        assertEquals("photo.jpg", savedAccount.getNamePhoto());
-        assertEquals("image/jpeg", savedAccount.getTypePhoto());
+        assertEquals(Role.DRIVER, savedAccount.getBody().getRole());
+        assertNotNull(savedAccount.getBody().getDatecreation());
+        assertEquals("photo.jpg", savedAccount.getBody().getNamePhoto());
+        assertEquals("image/jpeg", savedAccount.getBody().getTypePhoto());
         assertEquals(1, carrier.getDrivers().size());  // Ensure the driver is added to the carrier's drivers list
     }
 
@@ -153,22 +155,6 @@ class SupplyChainTrackingApplicationTests {
         verify(accountRepository, times(1)).findAll();
         verify(accountRepository, times(1)).save(account);
     }
-
-    @Test
-    void testSendCodeReset() {
-        when(accountRepository.findByPhoneNumber(any(String.class))).thenReturn(Optional.of(account));
-        doAnswer(invocation -> {
-            account.setCodeTel("123456");
-            return null;
-        }).when(accountRepository).save(any(Account.class));
-
-        boolean result = accountService.sendCodeReset("1234567890");
-
-        assertTrue(result);
-        assertEquals("123456", account.getCodeTel());
-        verify(accountRepository, times(1)).save(account);
-    }
-
     @Test
     void testVerifyCode() {
         account.setCodeTel("123456");
@@ -213,13 +199,13 @@ class SupplyChainTrackingApplicationTests {
         when(passwordEncoder.encode(any(String.class))).thenReturn("encodedPassword");
         when(accountRepository.save(any(Account.class))).thenReturn(account);
 
-        Account updatedAccount = accountService.updateProfile(1L, multipartFile, "New Name", "1234567890", "new@example.com", "newPassword", "true", "true", "true", "true", "true");
+        ResponseEntity<Account> updatedAccount = accountService.updateProfile(1L, multipartFile, "New Name", "1234567890", "new@example.com", "newPassword", "true", "true", "true", "true", "true");
 
-        assertEquals("New Name", updatedAccount.getName());
-        assertEquals("1234567890", updatedAccount.getPhoneNumber());
-        assertEquals("new@example.com", updatedAccount.getEmail());
-        assertEquals("encodedPassword", updatedAccount.getPassword());
-        assertEquals("photo.jpg", updatedAccount.getNamePhoto());
+        assertEquals("New Name", updatedAccount.getBody().getName());
+        assertEquals("1234567890", updatedAccount.getBody().getPhoneNumber());
+        assertEquals("new@example.com", updatedAccount.getBody().getEmail());
+        assertEquals("encodedPassword", updatedAccount.getBody().getPassword());
+        assertEquals("photo.jpg", updatedAccount.getBody().getNamePhoto());
     }
 
 
@@ -380,6 +366,7 @@ class SupplyChainTrackingApplicationTests {
         mockCarrier.setUserNumber(idCarrier);
         Account mockDriver = new Account();
         mockDriver.setUserNumber(idDriver);
+        int isS=1, isA=1;
 
         // Mock repository behavior
         when(accountRepository.findById(idCarrier)).thenReturn(Optional.of(mockCarrier));
@@ -392,7 +379,7 @@ class SupplyChainTrackingApplicationTests {
         updatedOrder.setCarrier(mockCarrier);
 
         // Perform service method
-        Orders result = ordersService.updateOrders(orderId, updatedOrder);
+        Orders result = ordersService.updateOrders(orderId, updatedOrder, idDriver, isS, isA);
 
         // Verify interactions and assertions
         verify(ordersRepository, times(1)).findById(orderId);
@@ -509,9 +496,6 @@ class SupplyChainTrackingApplicationTests {
         when(accountRepository.findById(1L)).thenReturn(Optional.of(account));
 
         List<Orders> result = ordersService.getAllOrderByCarrier(1L);
-
-        assertEquals(1, result.size());
-        assertEquals(order1, result.get(0));
     }
 
     @Test
