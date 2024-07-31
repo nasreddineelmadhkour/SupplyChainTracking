@@ -8,10 +8,13 @@ import com.pgsintl.supplychaintracking.Repository.AccountRepository;
 import com.pgsintl.supplychaintracking.Utils.ImageUtils;
 import com.twilio.Twilio;
 import jakarta.annotation.PostConstruct;
+import jakarta.mail.MessagingException;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -29,6 +32,8 @@ public class AccountService implements AccountIService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    IServiceEmail iServiceEmail;
 
 
 
@@ -46,7 +51,7 @@ public class AccountService implements AccountIService {
 
 
     @Override
-    public Account creatAccountDriver(String name, String password , String email, String cardNumber , String serialNumber , String phoneNumber, MultipartFile file, Long idCarrier)throws IOException {
+    public ResponseEntity<Account> creatAccountDriver(String name, String password , String email, String cardNumber , String serialNumber , String phoneNumber, MultipartFile file, Long idCarrier)throws IOException {
 
         Account newdriver = new Account();
         newdriver.setPhoneNumber(phoneNumber);
@@ -62,13 +67,17 @@ public class AccountService implements AccountIService {
         newdriver.setTypePhoto(file.getContentType());
         newdriver.setPhoto(ImageUtils.compressImage(file.getBytes()));
 
+        Account existAccount = accountRepository.findByPhoneNumber(phoneNumber).orElse(null);
+        if(existAccount != null){
+
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        }
         Account carrier = accountRepository.findById(idCarrier).orElse(null);
 
         assert carrier != null;
         carrier.getDrivers().add(newdriver);
 
-
-        return accountRepository.save(newdriver);
+        return new ResponseEntity<>(accountRepository.save(newdriver),HttpStatus.CREATED);
     }
 
 
@@ -133,9 +142,7 @@ public class AccountService implements AccountIService {
     }
 
     @Override
-    public boolean sendCodeReset(String identity) {
-
-
+    public boolean sendCodeReset(String identity) throws MessagingException {
         Optional<Account> account = accountRepository.findByPhoneNumber(identity);
 
         if(account.isPresent()){
@@ -143,6 +150,7 @@ public class AccountService implements AccountIService {
             account1.setCodeTel(String.valueOf(generateCode()));
             log.info(account1.getCodeTel());
             accountRepository.save(account1);
+            iServiceEmail.setMessage(account1.getEmail(),"Reset Password !",account1.getCodeTel());
             String m = "Your Code verification code is: "+account1.getCodeTel();
             log.info(m);
             return true;
@@ -199,17 +207,27 @@ public class AccountService implements AccountIService {
     }
 
     @Override
-    public Account updateProfile(Long idAccount, MultipartFile file, String name, String phoneNumber, String email, String password, String isEmail, String isPhone, String isP, String isPhoto, String isName) throws IOException {
+    public ResponseEntity<Account> updateProfile(Long idAccount, MultipartFile file, String name, String phoneNumber, String email, String password, String isEmail, String isPhone, String isP, String isPhoto, String isName) throws IOException {
 
         Account account = accountRepository.findById(idAccount).orElse(null);
         if(account!=null){
-
-            if(isEmail.equals("true"))
+            if(isEmail.equals("true")) {
+                Account accountExist = accountRepository.findByEmail(email).orElse(null);
+                if(accountExist!=null){
+                    return new ResponseEntity<>(accountExist,HttpStatus.CONFLICT);
+                }
                 account.setEmail(email);
+            }
+            if(isPhone.equals("true")) {
+                Account accountExist = accountRepository.findByPhoneNumber(phoneNumber).orElse(null);
+                if(accountExist!=null ) {
+                    return new ResponseEntity<>(accountExist,HttpStatus.CONFLICT);
+                }
+                account.setPhoneNumber(phoneNumber);
+
+            }
             if(isP.equals("true"))
                 account.setPassword(passwordEncoder.encode(password));
-            if(isPhone.equals("true"))
-                account.setPhoneNumber(phoneNumber);
             if(isName.equals("true"))
                 account.setName(name);
             if(isPhoto.equals("true")) {
@@ -217,21 +235,60 @@ public class AccountService implements AccountIService {
                 account.setTypePhoto(file.getContentType());
                 account.setPhoto(ImageUtils.compressImage(file.getBytes()));
             }
-
-
-
-
-
             accountRepository.save(account);
         }
-
         Account accountReturn= accountRepository.findById(idAccount).orElse(null);
-
         assert accountReturn != null;
         byte[] images= ImageUtils.decompressImage(accountReturn.getPhoto());
-
         accountReturn.setPhoto(images);
-        return accountReturn;
+
+        return new ResponseEntity<>(accountReturn,HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<Boolean> updateDriverByCarrier(Long idDriver, String isP, Account driver) {
+        Account driverOld = accountRepository.findById(idDriver).orElse(null);
+
+        if(driverOld!= null){
+
+            Account existAccount = accountRepository.findByPhoneNumber(driver.getPhoneNumber()).orElse(null);
+            Account existAccountEmail = accountRepository.findByEmail(driver.getEmail()).orElse(null);
+
+            if( existAccount!= null && existAccount.getPhoneNumber().equals(driver.getPhoneNumber())
+            )
+            {
+                log.info(existAccount.getPhoneNumber() +" "+driver.getPhoneNumber());
+                log.info(existAccount.getUserNumber() + " "+ driverOld.getUserNumber());
+                if(!existAccount.getUserNumber().equals(driverOld.getUserNumber()))
+                {
+                    log.info(existAccount.getPhoneNumber() +" "+driver.getPhoneNumber());
+                    return new ResponseEntity<>(false,HttpStatus.ALREADY_REPORTED);
+                }
+            }
+            if(existAccountEmail != null && existAccountEmail.getEmail().equals(driver.getEmail())
+            ){
+                log.info("exist email");
+                if(!existAccountEmail.getEmail().equals(driverOld.getEmail())) {
+                    return new ResponseEntity<>(false, HttpStatus.CONFLICT);
+                }
+            }
+
+            driverOld.setName(driver.getName());
+            driverOld.setEmail(driver.getEmail());
+            driverOld.setPhoneNumber(driver.getPhoneNumber());
+            driverOld.setCardNumber(driver.getCardNumber());
+            driverOld.setSerialNumber(driver.getSerialNumber());
+
+            if(isP.equals("true"))
+            {
+                driverOld.setPassword(passwordEncoder.encode(driver.getPassword()));
+            }
+
+            accountRepository.save(driverOld);
+            return new ResponseEntity<>(true,HttpStatus.OK);
+
+        }
+        return new ResponseEntity<>(false,HttpStatus.CONFLICT);
     }
 
 

@@ -29,7 +29,7 @@ public class OrdersController {
     @PreAuthorize("hasAuthority('CARRIER')")
     public List<Orders> getOrdersByCarrier(@PathVariable Long idCarrier)
     {
-        return ordersIService.getAllOrderByCarrier(idCarrier);
+        return ordersIService.getOrderByCarrier(idCarrier);
     }
 
     @GetMapping("/admin")
@@ -44,7 +44,11 @@ public class OrdersController {
         return ordersIService.getOrdersTodayBycarrier(idCarrier);
     }
 
-
+    @PostMapping("/deleteOrder/{idOrders}")
+    @PreAuthorize("hasAuthority('CARRIER')")
+    public boolean deleteOrders(@PathVariable Long idOrders){
+        return ordersIService.deleteOrders(idOrders);
+    }
 
     @GetMapping("/ordersByDriver/{idDriver}")
     @PreAuthorize("hasAuthority('DRIVER')")
@@ -70,4 +74,12 @@ public class OrdersController {
     public void completedOrders(@PathVariable Long idOrders){
         ordersIService.completedOrders(idOrders);
     }
+
+
+    @PostMapping("/updateOrders/{idOrder}/{idDriver}/{isS}/{isA}")
+    @PreAuthorize("hasAuthority('CARRIER')")
+    public Orders updateOrders(@RequestBody Orders orders,@PathVariable Long idOrder, @PathVariable Long idDriver ,@PathVariable int isS , @PathVariable int isA) {
+        return ordersIService.updateOrders(idOrder,orders,idDriver,isS,isA);
+    }
+
 }
