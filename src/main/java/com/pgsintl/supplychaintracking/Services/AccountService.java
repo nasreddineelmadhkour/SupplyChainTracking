@@ -1,16 +1,11 @@
 package com.pgsintl.supplychaintracking.Services;
 
-import com.pgsintl.supplychaintracking.Config.TwilioConfig;
 import com.pgsintl.supplychaintracking.Dto.AccountLoginDto;
 import com.pgsintl.supplychaintracking.Entities.Account;
 import com.pgsintl.supplychaintracking.Entities.Role;
 import com.pgsintl.supplychaintracking.Repository.AccountRepository;
 import com.pgsintl.supplychaintracking.Utils.ImageUtils;
-import com.twilio.Twilio;
-import jakarta.annotation.PostConstruct;
 import jakarta.mail.MessagingException;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

@@ -11,21 +11,21 @@ import java.util.List;
 
 public interface AccountIService {
 
-    public Account creatAccountCarrier(Account account);
+     Account creatAccountCarrier(Account account);
 
-    public ResponseEntity<Account> creatAccountDriver(String name, String password , String email, String cardNumber , String serialNumber , String phoneNumber, MultipartFile file, Long idCarrier)throws IOException;
+     ResponseEntity<Account> creatAccountDriver(String name, String password , String email, String cardNumber , String serialNumber , String phoneNumber, MultipartFile file, Long idCarrier)throws IOException;
 
-    public List<AccountLoginDto> getAllUser();
+     List<AccountLoginDto> getAllUser();
 
-    public List<Account> getAllDriverByCarrier(Long idCarrier);
-    public boolean setAllNoPDP(MultipartFile file) throws IOException;
+     List<Account> getAllDriverByCarrier(Long idCarrier);
+     boolean setAllNoPDP(MultipartFile file) throws IOException;
 
     boolean sendCodeReset(String identity) throws MessagingException;
-    public boolean verifyCode(String code , String identity);
-    public boolean changePasswordAfterVerification(String newPassword , String identity);
+     boolean verifyCode(String code , String identity);
+     boolean changePasswordAfterVerification(String newPassword , String identity);
 
 
-    public boolean deleteDriver(Long idDriver);
+     boolean deleteDriver(Long idDriver);
 
     ResponseEntity<Account> updateProfile(Long idAccount, MultipartFile file, String name, String phoneNumber, String email, String password, String isEmail, String isPhone, String isPassword, String isPhoto, String isName) throws IOException;
 

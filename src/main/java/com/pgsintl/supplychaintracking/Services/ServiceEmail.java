@@ -25,8 +25,6 @@ public class ServiceEmail implements IServiceEmail{
         mailHelper.setFrom("nasreddine1234@gmail.com");
         mailHelper.setTo(to);
         mailHelper.setSubject("Reset Password !");
-
-        System.out.println("token"+token);
         mailHelper.setText("",
              "<!DOCTYPE html>\n" +
                 "\n" +

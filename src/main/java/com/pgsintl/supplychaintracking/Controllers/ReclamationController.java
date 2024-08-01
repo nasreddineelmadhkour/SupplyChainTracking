@@ -5,7 +5,6 @@ import com.pgsintl.supplychaintracking.Entities.Reclamation;
 import com.pgsintl.supplychaintracking.Services.OrdersIService;
 import com.pgsintl.supplychaintracking.Services.ReclamationIService;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
