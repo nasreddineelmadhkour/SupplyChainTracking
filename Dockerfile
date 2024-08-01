@@ -13,7 +13,7 @@ COPY pom.xml .
 RUN chmod +x mvnw
 
 # Download the JAR file from Nexus
-ARG NEXUS_URL=http://172.17.20.244:8081/repository/maven-releases/com/pgsintl/SupplyChainTracking/5.0/SupplyChainTracking-5.0.jar
+ARG NEXUS_URL=http://41.226.3.154:8081/repository/maven-releases/com/pgsintl/SupplyChainTracking/5.0/SupplyChainTracking-5.0.jar
 RUN curl -o /SupplyChainTracking-5.0.jar $NEXUS_URL
 
 # Expose the port your application runs on
