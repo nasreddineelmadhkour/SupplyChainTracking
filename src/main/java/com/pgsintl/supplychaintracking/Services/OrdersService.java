@@ -8,13 +8,15 @@ import com.pgsintl.supplychaintracking.Repository.AccountRepository;
 import com.pgsintl.supplychaintracking.Repository.OrdersRepository;
 import com.pgsintl.supplychaintracking.Repository.ReclamationRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 
 @Service
 @AllArgsConstructor
+@Slf4j
 public class OrdersService implements OrdersIService {
     private  OrdersRepository ordersRepository;
     private  ReclamationRepository reclamationRepository;
@@ -33,12 +35,25 @@ public class OrdersService implements OrdersIService {
 
     @Override
     public List<Orders> getAllOrders() {
+
         return ordersRepository.findAll();
     }
 
     @Override
+    public List<Orders> getAllOrderByDriver(Long idDriver) {
+        return ordersRepository.findByReclamationIsNotNullAndDriver_UserNumber(idDriver);
+    }
+
+    @Override
     public List<Orders> getAllOrderByCarrier(Long idCarrier) {
-        List<Orders> ordersList = new ArrayList<>();
+
+        return ordersRepository.findByReclamationIsNotNullAndCarrierUserNumber(idCarrier);
+    }
+
+    @Override
+    public List<Orders> getOrderByCarrier(Long idCarrier) {
+
+      List<Orders> ordersList = new ArrayList<>();
         Optional<Account> optionalAccount = accountRepository.findById(idCarrier);
         if (optionalAccount.isPresent()) {
             Account account = optionalAccount.get();
@@ -67,7 +82,6 @@ public class OrdersService implements OrdersIService {
 
         return ordersList;
     }
-
     @Override
     public List<Orders> getOrdersTodayBycarrier(Long idCarrier) {
         List<Orders> ordersList = new ArrayList<>();
@@ -196,17 +210,26 @@ public class OrdersService implements OrdersIService {
             return false;
         }
     }
-
+/*
     @Override
-    public Orders updateOrders(Long orderId, Orders updatedOrders) {
+    public Orders updateOrders(Long orderId, Orders updatedOrders ,Long idDriver,int isS,int isA) {
         Optional<Orders> existingOrderOptional = ordersRepository.findById(orderId);
-        if (existingOrderOptional.isPresent()) {
+        Optional<Account> existingDriverOptional = accountRepository.findById(idDriver);
+        log.info("Avant present");
+
+        if (existingOrderOptional.isPresent() && existingDriverOptional.isPresent()) {
+            log.info("isPresent");
             Orders existingOrder = existingOrderOptional.get();
+            Account existDriver = existingDriverOptional.get();
             // Update the fields of the existing order
             existingOrder.setArrivalLat(updatedOrders.getArrivalLat());
             existingOrder.setArrivalLong(updatedOrders.getArrivalLong());
-            existingOrder.setStartingPoint(updatedOrders.getStartingPoint());
+            if(isS==1) {
+                existingOrder.setStartingPoint(updatedOrders.getStartingPoint());
+            }
+            if(isA==1){
             existingOrder.setArrivalPoint(updatedOrders.getArrivalPoint());
+            }
             existingOrder.setDistance(updatedOrders.getDistance());
             existingOrder.setEstimation(updatedOrders.getEstimation());
             existingOrder.setWeightOrders(updatedOrders.getWeightOrders());
@@ -214,16 +237,14 @@ public class OrdersService implements OrdersIService {
             existingOrder.setProductOrders(updatedOrders.getProductOrders());
             existingOrder.setStatus(updatedOrders.getStatus());
             existingOrder.setDateOrders(updatedOrders.getDateOrders());
-            existingOrder.setDateFinOrders(updatedOrders.getDateFinOrders());
-            existingOrder.setCarrier(updatedOrders.getCarrier());
-            existingOrder.setDriver(updatedOrders.getDriver());
-
+            existingOrder.setDriver(existDriver);
+            existingOrder.setStatus(updatedOrders.getStatus());
             return ordersRepository.save(existingOrder);
         } else {
             throw new IllegalArgumentException("Order not found with ID: " + orderId);
         }
     }
-
+*/
     @Override
     public void completedOrders(Long idOrders) {
             Orders orders = ordersRepository.findById(idOrders).orElse(null);
@@ -235,4 +256,36 @@ public class OrdersService implements OrdersIService {
     }
 
 
+    @Scheduled(fixedRate = 10000)
+    public void changeStatusOrders(){
+        Date Yesterday = getYesterday();
+        Date Tomorrow = getTomorrow();
+        for (Orders orders :ordersRepository.findByDateOrdersIsBetweenAndStatus(Yesterday,Tomorrow,StatusOrders.DELAYED))
+        {
+
+            orders.setStatus(StatusOrders.PENDING);
+            ordersRepository.save(orders);
+            log.info("Orderproduct : "+orders.getProductOrders()+" | Date:"+orders.getDateOrders().toString());
+        }
+
+    }
+
+    public Date getYesterday() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, 23);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        calendar.add(Calendar.DAY_OF_MONTH, -1);
+        return calendar.getTime();
+    }
+    public Date getTomorrow() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        calendar.add(Calendar.DAY_OF_MONTH, 1);
+        return calendar.getTime();
+    }
 }

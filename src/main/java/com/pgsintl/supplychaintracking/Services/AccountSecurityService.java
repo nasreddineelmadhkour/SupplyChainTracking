@@ -6,14 +6,11 @@ import com.pgsintl.supplychaintracking.Entities.Account;
 import com.pgsintl.supplychaintracking.Repository.AccountRepository;
 
 import com.pgsintl.supplychaintracking.Utils.ImageUtils;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import java.util.Optional;
 
 
@@ -87,9 +84,4 @@ public class AccountSecurityService implements UserDetailsService {
 
 
 
-    public String addUser(Account userInfo){
-        userInfo.setPassword(passwordEncoder.encode(userInfo.getPassword()));
-        userInfoRepository.save(userInfo);
-        return "User added successfully";
-    }
 }
