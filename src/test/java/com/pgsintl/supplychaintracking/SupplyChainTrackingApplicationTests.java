@@ -824,4 +824,88 @@ void testSendCodeReset_Success() {
         verify(ordersRepository, never()).save(any(Orders.class));
     }
 
+    @Test
+    void testGetAllOrderByDriver() {
+        // Arrange
+        Long idDriver = 1L;
+        Orders order3 = new Orders();
+        order3.setDriver(new Account());
+        order3.getDriver().setUserNumber(idDriver);
+        order3.setReclamation(new Reclamation());  // Ensure reclamation is not null
+
+        Orders order4 = new Orders();
+        order4.setDriver(new Account());
+        order4.getDriver().setUserNumber(idDriver);
+        order4.setReclamation(new Reclamation());  // Ensure reclamation is not null
+
+        List<Orders> expectedOrders = List.of(order3, order4);
+
+        // Mock repository behavior
+        when(ordersRepository.findByReclamationIsNotNullAndDriver_UserNumber(idDriver)).thenReturn(expectedOrders);
+
+        // Act
+        List<Orders> result = ordersService.getAllOrderByDriver(idDriver);
+
+        // Assert
+        assertEquals(expectedOrders, result);
+        verify(ordersRepository, times(1)).findByReclamationIsNotNullAndDriver_UserNumber(idDriver);
+    }
+
+    @Test
+    void testGetAllOrderByDriver_NoOrders() {
+        // Arrange
+        Long idDriver = 1L;
+
+        // Mock repository behavior
+        when(ordersRepository.findByReclamationIsNotNullAndDriver_UserNumber(idDriver)).thenReturn(Collections.emptyList());
+
+        // Act
+        List<Orders> result = ordersService.getAllOrderByDriver(idDriver);
+
+        // Assert
+        assertTrue(result.isEmpty());
+        verify(ordersRepository, times(1)).findByReclamationIsNotNullAndDriver_UserNumber(idDriver);
+    }
+
+    @Test
+    void testGetAllOrderByCarrierCase() {
+        // Arrange
+        Long idCarrier = 1L;
+        Orders order3 = new Orders();
+        order3.setCarrier(new Account());
+        order3.getCarrier().setUserNumber(idCarrier);
+        order3.setReclamation(new Reclamation());  // Ensure reclamation is not null
+
+        Orders order4 = new Orders();
+        order4.setCarrier(new Account());
+        order4.getCarrier().setUserNumber(idCarrier);
+        order4.setReclamation(new Reclamation());  // Ensure reclamation is not null
+
+        List<Orders> expectedOrders = List.of(order3, order4);
+
+        // Mock repository behavior
+        when(ordersRepository.findByReclamationIsNotNullAndCarrierUserNumber(idCarrier)).thenReturn(expectedOrders);
+
+        // Act
+        List<Orders> result = ordersService.getAllOrderByCarrier(idCarrier);
+
+        // Assert
+        assertEquals(expectedOrders, result);
+        verify(ordersRepository, times(1)).findByReclamationIsNotNullAndCarrierUserNumber(idCarrier);
+    }
+    @Test
+    void testGetAllOrderByCarrier_NoOrders() {
+        // Arrange
+        Long idCarrier = 1L;
+
+        // Mock repository behavior
+        when(ordersRepository.findByReclamationIsNotNullAndCarrierUserNumber(idCarrier)).thenReturn(Collections.emptyList());
+
+        // Act
+        List<Orders> result = ordersService.getAllOrderByCarrier(idCarrier);
+
+        // Assert
+        assertTrue(result.isEmpty());
+        verify(ordersRepository, times(1)).findByReclamationIsNotNullAndCarrierUserNumber(idCarrier);
+    }
 }
