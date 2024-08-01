@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.pgsintl</groupId>
     <artifactId>SupplyChainTracking</artifactId>
-    <version>4.1</version>
+    <version>3.1</version>
     <name>SupplyChainTracking</name>
     <description>SupplyChainTracking</description>
     <properties>
@@ -99,6 +99,11 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-mail</artifactId>
         </dependency>
 
     </dependencies>
