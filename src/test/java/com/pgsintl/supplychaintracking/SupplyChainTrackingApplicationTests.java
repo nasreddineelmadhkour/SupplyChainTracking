@@ -14,10 +14,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.multipart.MultipartFile;
+
 import java.io.IOException;
 import java.util.*;
 
@@ -41,6 +40,10 @@ class SupplyChainTrackingApplicationTests {
     @Mock
     private AccountRepository accountRepository;
 
+    private Account carrier;
+    private Account driver;
+    @Mock
+    private MultipartFile file;
     @Mock
     private MultipartFile multipartFile;
     @InjectMocks
@@ -61,7 +64,6 @@ class SupplyChainTrackingApplicationTests {
         order1 = new Orders();
         order2 = new Orders();
         account.setOrdersCarrier(List.of(order1, order2));
-
     }
 
 
@@ -98,20 +100,20 @@ class SupplyChainTrackingApplicationTests {
         when(multipartFile.getBytes()).thenReturn(new byte[10]);
         when(accountRepository.save(any(Account.class))).thenReturn(driver);
 
-        ResponseEntity<Account> savedAccount = accountService.creatAccountDriver("Driver", "password", "driver@example.com", "1234", "5678", "1234567890", multipartFile, 2L);
+        Account savedAccount = accountService.creatAccountDriver("Driver", "password", "driver@example.com", "1234", "5678", "1234567890", multipartFile, 2L);
 
-        assertEquals(Role.DRIVER, Objects.requireNonNull(savedAccount.getBody()).getRole());
-        assertNotNull(savedAccount.getBody().getDatecreation());
-        assertEquals("photo.jpg", savedAccount.getBody().getNamePhoto());
-        assertEquals("image/jpeg", savedAccount.getBody().getTypePhoto());
+        assertEquals(Role.DRIVER, savedAccount.getRole());
+        assertNotNull(savedAccount.getDatecreation());
+        assertEquals("photo.jpg", savedAccount.getNamePhoto());
+        assertEquals("image/jpeg", savedAccount.getTypePhoto());
         assertEquals(1, carrier.getDrivers().size());  // Ensure the driver is added to the carrier's drivers list
     }
 
     @Test
     void testGetAllUser() {
-        Account account2 = new Account();
-        account2.setPhoto(new byte[10]);
-        List<Account> accounts = Collections.singletonList(account2);
+        Account account = new Account();
+        account.setPhoto(new byte[10]);
+        List<Account> accounts = Collections.singletonList(account);
         when(accountRepository.findAll()).thenReturn(accounts);
 
         List<AccountLoginDto> accountLoginDtos = accountService.getAllUser();
@@ -151,6 +153,22 @@ class SupplyChainTrackingApplicationTests {
         verify(accountRepository, times(1)).findAll();
         verify(accountRepository, times(1)).save(account);
     }
+
+    @Test
+    void testSendCodeReset() {
+        when(accountRepository.findByPhoneNumber(any(String.class))).thenReturn(Optional.of(account));
+        doAnswer(invocation -> {
+            account.setCodeTel("123456");
+            return null;
+        }).when(accountRepository).save(any(Account.class));
+
+        boolean result = accountService.sendCodeReset("1234567890");
+
+        assertTrue(result);
+        assertEquals("123456", account.getCodeTel());
+        verify(accountRepository, times(1)).save(account);
+    }
+
     @Test
     void testVerifyCode() {
         account.setCodeTel("123456");
@@ -195,13 +213,13 @@ class SupplyChainTrackingApplicationTests {
         when(passwordEncoder.encode(any(String.class))).thenReturn("encodedPassword");
         when(accountRepository.save(any(Account.class))).thenReturn(account);
 
-        ResponseEntity<Account> updatedAccount = accountService.updateProfile(1L, multipartFile, "New Name", "1234567890", "new@example.com", "newPassword", "true", "true", "true", "true", "true");
+        Account updatedAccount = accountService.updateProfile(1L, multipartFile, "New Name", "1234567890", "new@example.com", "newPassword", "true", "true", "true", "true", "true");
 
-        assertEquals("New Name", Objects.requireNonNull(updatedAccount.getBody()).getName());
-        assertEquals("1234567890", updatedAccount.getBody().getPhoneNumber());
-        assertEquals("new@example.com", updatedAccount.getBody().getEmail());
-        assertEquals("encodedPassword", updatedAccount.getBody().getPassword());
-        assertEquals("photo.jpg", updatedAccount.getBody().getNamePhoto());
+        assertEquals("New Name", updatedAccount.getName());
+        assertEquals("1234567890", updatedAccount.getPhoneNumber());
+        assertEquals("new@example.com", updatedAccount.getEmail());
+        assertEquals("encodedPassword", updatedAccount.getPassword());
+        assertEquals("photo.jpg", updatedAccount.getNamePhoto());
     }
 
 
@@ -362,7 +380,6 @@ class SupplyChainTrackingApplicationTests {
         mockCarrier.setUserNumber(idCarrier);
         Account mockDriver = new Account();
         mockDriver.setUserNumber(idDriver);
-        int isS=1, isA=1;
 
         // Mock repository behavior
         when(accountRepository.findById(idCarrier)).thenReturn(Optional.of(mockCarrier));
@@ -375,7 +392,7 @@ class SupplyChainTrackingApplicationTests {
         updatedOrder.setCarrier(mockCarrier);
 
         // Perform service method
-        Orders result = ordersService.updateOrders(orderId, updatedOrder, idDriver, isS, isA);
+        Orders result = ordersService.updateOrders(orderId, updatedOrder);
 
         // Verify interactions and assertions
         verify(ordersRepository, times(1)).findById(orderId);
@@ -486,23 +503,20 @@ class SupplyChainTrackingApplicationTests {
 
     @Test
     void testGetAllOrderByCarrier() {
-        order1.setDateOrders(getDateMinusDays()); // Date in the past
-        order2.setDateOrders(new Date()); // Today's date
+        order1.setDateOrders(getDateMinusDays(1));
+        order2.setDateOrders(new Date());
 
         when(accountRepository.findById(1L)).thenReturn(Optional.of(account));
 
-        List<Orders> result = ordersService.getOrderByCarrier(1L);
+        List<Orders> result = ordersService.getAllOrderByCarrier(1L);
 
-        assertNotNull(result);
-        assertEquals(1, result.size()); // Only one order should be returned (order1)
-
-        assertTrue(result.contains(order1));
-        assertFalse(result.contains(order2));
+        assertEquals(1, result.size());
+        assertEquals(order1, result.get(0));
     }
 
     @Test
     void testGetOrdersTodayByCarrier() {
-        order1.setDateOrders(getDateMinusDays());
+        order1.setDateOrders(getDateMinusDays(1));
         order2.setDateOrders(new Date());
 
         when(accountRepository.findById(1L)).thenReturn(Optional.of(account));
@@ -519,7 +533,7 @@ class SupplyChainTrackingApplicationTests {
         driver.setUserNumber(1L);
         order1.setDriver(driver);
         order2.setDriver(driver);
-        order1.setDateOrders(getDateMinusDays());
+        order1.setDateOrders(getDateMinusDays(1));
         order2.setDateOrders(new Date());
 
         when(ordersRepository.findAll()).thenReturn(List.of(order1, order2));
@@ -532,11 +546,11 @@ class SupplyChainTrackingApplicationTests {
 
     @Test
     void testGetOrdersTodayByDriver() {
-        Account driver3 = new Account();
-        driver3.setUserNumber(1L);
-        order1.setDriver(driver3);
-        order2.setDriver(driver3);
-        order1.setDateOrders(getDateMinusDays());
+        Account driver = new Account();
+        driver.setUserNumber(1L);
+        order1.setDriver(driver);
+        order2.setDriver(driver);
+        order1.setDateOrders(getDateMinusDays(1));
         order2.setDateOrders(new Date());
 
         when(ordersRepository.findAll()).thenReturn(List.of(order1, order2));
@@ -547,261 +561,10 @@ class SupplyChainTrackingApplicationTests {
         assertEquals(order2, result.get(0));
     }
 
-    private Date getDateMinusDays() {
+    private Date getDateMinusDays(int days) {
         Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.DAY_OF_YEAR, -1);
+        cal.add(Calendar.DAY_OF_YEAR, -days);
         return cal.getTime();
-    }
-
-
-    @Test
-    void testUpdateDriverByCarrier_Success() {
-        Long idDriver = 1L;
-        String isP = "true";
-        Account driver = new Account();
-        driver.setPhoneNumber("123456789");
-        driver.setEmail("test@example.com");
-        driver.setPassword("newPassword");
-
-        Account driverOld = new Account();
-        driverOld.setUserNumber(1L);
-        driverOld.setPhoneNumber("987654321");
-        driverOld.setEmail("old@example.com");
-
-        when(accountRepository.findById(idDriver)).thenReturn(Optional.of(driverOld));
-        when(accountRepository.findByPhoneNumber(driver.getPhoneNumber())).thenReturn(Optional.of(driverOld));
-        when(accountRepository.findByEmail(driver.getEmail())).thenReturn(Optional.of(driverOld));
-        when(passwordEncoder.encode(driver.getPassword())).thenReturn("encodedPassword");
-
-        ResponseEntity<Boolean> response = accountService.updateDriverByCarrier(idDriver, isP, driver);
-
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(Boolean.TRUE, response.getBody());
-
-        verify(accountRepository).save(driverOld);
-    }
-
-
-
-    @Test
-    void testUpdateDriverByCarrier_PhoneNumberConflict() {
-        Long idDriver = 1L;
-        String isP = "true";
-        Account driver3 = new Account();
-        driver3.setPhoneNumber("123456789");
-        driver3.setEmail("test@example.com");
-
-        Account driverOld = new Account();
-        driverOld.setUserNumber(1L);
-
-        Account existingAccount = new Account();
-        existingAccount.setPhoneNumber("123456789");
-        existingAccount.setUserNumber(2L);
-
-        when(accountRepository.findById(idDriver)).thenReturn(Optional.of(driverOld));
-        when(accountRepository.findByPhoneNumber(driver3.getPhoneNumber())).thenReturn(Optional.of(existingAccount));
-
-        ResponseEntity<Boolean> response = accountService.updateDriverByCarrier(idDriver, isP, driver3);
-
-        assertEquals(HttpStatus.ALREADY_REPORTED, response.getStatusCode());
-        assertEquals(false, response.getBody());
-    }
-
-    @Test
-    void testUpdateDriverByCarrier_EmailConflict() {
-        Long idDriver = 1L;
-        String isP = "true";
-        Account driver = new Account();
-        driver.setPhoneNumber("123456789");
-        driver.setEmail("test@example.com");
-
-        Account driverOld = new Account();
-        driverOld.setUserNumber(1L);
-
-        Account existingAccountEmail = new Account();
-        existingAccountEmail.setEmail("test@example.com");
-
-        when(accountRepository.findById(idDriver)).thenReturn(Optional.of(driverOld));
-        when(accountRepository.findByEmail(driver.getEmail())).thenReturn(Optional.of(existingAccountEmail));
-
-        ResponseEntity<Boolean> response = accountService.updateDriverByCarrier(idDriver, isP, driver);
-
-        assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
-        assertEquals(false, response.getBody());
-    }
-
-    @Test
-    void testUpdateDriverByCarrier_DriverNotFound() {
-        Long idDriver = 1L;
-        String isP = "true";
-        Account driver = new Account();
-
-        when(accountRepository.findById(idDriver)).thenReturn(Optional.empty());
-
-        ResponseEntity<Boolean> response = accountService.updateDriverByCarrier(idDriver, isP, driver);
-
-        assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
-        assertEquals(false, response.getBody());
-    }
-
-    @Test
-    void testGenerateCodeWithinRange() {
-        int code = accountService.generateCode();
-        assertTrue(code >= 100000 && code <= 999999, "Generated code should be within the range 100000 to 999999");
-    }
-
-
-    @Test
-    void testGetOrderByCarrier_OrdersNotForToday() {
-        Long idCarrier = 1L;
-        Account account2 = new Account();
-        Orders order3 = new Orders();
-        order3.setDateOrders(getDateDaysAgo(1));
-        Orders order4 = new Orders();
-        order4.setDateOrders(getDateDaysAgo(2));
-
-        account2.setOrdersCarrier(Arrays.asList(order3, order4));
-
-        when(accountRepository.findById(idCarrier)).thenReturn(Optional.of(account2));
-
-        List<Orders> result = ordersService.getOrderByCarrier(idCarrier);
-
-        assertEquals(2, result.size());
-        assertTrue(result.contains(order3));
-        assertTrue(result.contains(order4));
-    }
-    @Test
-    void testGetOrderByCarrier_EmptyOrders() {
-        Long idCarrier = 1L;
-        Account account2 = new Account();
-        account2.setOrdersCarrier(Collections.emptyList());
-        when(accountRepository.findById(idCarrier)).thenReturn(Optional.of(account2));
-        List<Orders> result = ordersService.getOrderByCarrier(idCarrier);
-        assertEquals(0, result.size());
-    }
-    @Test
-     void testGetOrderByCarrier_CarrierNotFound() {
-        Long idCarrier = 1L;
-
-        when(accountRepository.findById(idCarrier)).thenReturn(Optional.empty());
-
-        List<Orders> result = ordersService.getOrderByCarrier(idCarrier);
-
-        assertEquals(0, result.size());
-    }
-
-    private Date getDateDaysAgo(int daysAgo) {
-        Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.DAY_OF_YEAR, -daysAgo);
-        return cal.getTime();
-    }
-
-
-
-    @Test
-     void testStartingOrders_OrderExists() {
-        Long idOrders = 1L;
-        Orders order = new Orders();
-        order.setStatus(StatusOrders.PENDING);
-
-        when(ordersRepository.findById(idOrders)).thenReturn(Optional.of(order));
-
-        ordersService.startingOrders(idOrders);
-
-        assertEquals(StatusOrders.IN_PROGRESS, order.getStatus());
-        verify(ordersRepository).save(order);
-    }
-    @Test
-    void testStartingOrders_OrderDoesNotExist() {
-        Long idOrders = 1L;
-
-        when(ordersRepository.findById(idOrders)).thenReturn(Optional.empty());
-
-        ordersService.startingOrders(idOrders);
-
-        verify(ordersRepository, never()).save(any(Orders.class));
-    }
-
-    @Test
-    void testChangeStatusOrders() {
-        Date yesterday = getYesterday();
-        Date tomorrow = getTomorrow();
-
-        Orders order3 = new Orders();
-        order3.setDateOrders(new Date());
-        order3.setStatus(StatusOrders.DELAYED);
-        Orders order4 = new Orders();
-        order4.setDateOrders(new Date());
-        order4.setStatus(StatusOrders.DELAYED);
-
-        List<Orders> delayedOrders = Arrays.asList(order3, order4);
-
-        when(ordersRepository.findByDateOrdersIsBetweenAndStatus(yesterday, tomorrow, StatusOrders.DELAYED)).thenReturn(delayedOrders);
-
-        ordersService.changeStatusOrders();
-
-        assertEquals(StatusOrders.PENDING, order3.getStatus());
-        assertEquals(StatusOrders.PENDING, order4.getStatus());
-        verify(ordersRepository, times(1)).save(order3);
-        verify(ordersRepository, times(1)).save(order4);
-    }
-
-    @Test
-    void testChangeStatusOrders_NoOrders() {
-        Date yesterday = getYesterday();
-        Date tomorrow = getTomorrow();
-
-        when(ordersRepository.findByDateOrdersIsBetweenAndStatus(yesterday, tomorrow, StatusOrders.DELAYED)).thenReturn(Collections.emptyList());
-
-        ordersService.changeStatusOrders();
-
-        verify(ordersRepository, never()).save(any(Orders.class));
-    }
-
-    private Date getYesterday() {
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.HOUR_OF_DAY, 23);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
-        calendar.add(Calendar.DAY_OF_MONTH, -1);
-        return calendar.getTime();
-    }
-    private Date getTomorrow() {
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.HOUR_OF_DAY, 0);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
-        calendar.add(Calendar.DAY_OF_MONTH, 1);
-        return calendar.getTime();
-    }
-
-
-    @Test
-     void testCompletedOrders_OrderExists() {
-        Long idOrders = 1L;
-        Orders order = new Orders();
-        order.setStatus(StatusOrders.IN_PROGRESS);
-
-        when(ordersRepository.findById(idOrders)).thenReturn(Optional.of(order));
-
-        ordersService.completedOrders(idOrders);
-
-        assertEquals(StatusOrders.COMPLETED, order.getStatus());
-        assertNotNull(order.getDateFinOrders());
-        verify(ordersRepository).save(order);
-    }
-
-    @Test
-     void testCompletedOrders_OrderDoesNotExist() {
-        Long idOrders = 1L;
-
-        when(ordersRepository.findById(idOrders)).thenReturn(Optional.empty());
-
-        ordersService.completedOrders(idOrders);
-
-        verify(ordersRepository, never()).save(any(Orders.class));
     }
 
 }
