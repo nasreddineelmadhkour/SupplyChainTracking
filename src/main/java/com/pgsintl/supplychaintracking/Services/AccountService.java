@@ -26,9 +26,6 @@ public class AccountService implements AccountIService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
-    //@Autowired
-    //IServiceEmail iServiceEmail;
-
 
 
 
@@ -144,7 +141,6 @@ public class AccountService implements AccountIService {
             account1.setCodeTel(String.valueOf(generateCode()));
             log.info(account1.getCodeTel());
             accountRepository.save(account1);
-           // iServiceEmail.setMessage(account1.getEmail(),"Reset Password !",account1.getCodeTel());
             String m = "Your Code verification code is: "+account1.getCodeTel();
             log.info(m);
             return true;
