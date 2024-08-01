@@ -2,7 +2,6 @@ package com.pgsintl.supplychaintracking.Services;
 
 import com.pgsintl.supplychaintracking.Dto.AccountLoginDto;
 import com.pgsintl.supplychaintracking.Entities.Account;
-import jakarta.mail.MessagingException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -20,7 +19,7 @@ public interface AccountIService {
      List<Account> getAllDriverByCarrier(Long idCarrier);
      boolean setAllNoPDP(MultipartFile file) throws IOException;
 
-    boolean sendCodeReset(String identity) throws MessagingException;
+    boolean sendCodeReset(String identity) ;
      boolean verifyCode(String code , String identity);
      boolean changePasswordAfterVerification(String newPassword , String identity);
 

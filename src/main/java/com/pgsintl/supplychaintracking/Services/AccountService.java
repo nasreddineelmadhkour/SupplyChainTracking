@@ -5,7 +5,6 @@ import com.pgsintl.supplychaintracking.Entities.Account;
 import com.pgsintl.supplychaintracking.Entities.Role;
 import com.pgsintl.supplychaintracking.Repository.AccountRepository;
 import com.pgsintl.supplychaintracking.Utils.ImageUtils;
-import jakarta.mail.MessagingException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -27,8 +26,8 @@ public class AccountService implements AccountIService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
-    @Autowired
-    IServiceEmail iServiceEmail;
+    //@Autowired
+    //IServiceEmail iServiceEmail;
 
 
 
@@ -137,7 +136,7 @@ public class AccountService implements AccountIService {
     }
 
     @Override
-    public boolean sendCodeReset(String identity) throws MessagingException {
+    public boolean sendCodeReset(String identity)  {
         Optional<Account> account = accountRepository.findByPhoneNumber(identity);
 
         if(account.isPresent()){
@@ -145,7 +144,7 @@ public class AccountService implements AccountIService {
             account1.setCodeTel(String.valueOf(generateCode()));
             log.info(account1.getCodeTel());
             accountRepository.save(account1);
-            iServiceEmail.setMessage(account1.getEmail(),"Reset Password !",account1.getCodeTel());
+           // iServiceEmail.setMessage(account1.getEmail(),"Reset Password !",account1.getCodeTel());
             String m = "Your Code verification code is: "+account1.getCodeTel();
             log.info(m);
             return true;

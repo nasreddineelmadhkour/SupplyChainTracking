@@ -48,6 +48,7 @@ public class OrdersService implements OrdersIService {
     public List<Orders> getAllOrderByCarrier(Long idCarrier) {
 
         return ordersRepository.findByReclamationIsNotNullAndCarrierUserNumber(idCarrier);
+
     }
 
     @Override
@@ -210,7 +211,7 @@ public class OrdersService implements OrdersIService {
             return false;
         }
     }
-/*
+
     @Override
     public Orders updateOrders(Long orderId, Orders updatedOrders ,Long idDriver,int isS,int isA) {
         Optional<Orders> existingOrderOptional = ordersRepository.findById(orderId);
@@ -244,7 +245,7 @@ public class OrdersService implements OrdersIService {
             throw new IllegalArgumentException("Order not found with ID: " + orderId);
         }
     }
-*/
+
     @Override
     public void completedOrders(Long idOrders) {
             Orders orders = ordersRepository.findById(idOrders).orElse(null);

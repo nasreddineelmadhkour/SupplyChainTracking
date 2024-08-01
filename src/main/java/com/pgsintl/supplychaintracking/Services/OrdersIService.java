@@ -28,7 +28,7 @@ public interface OrdersIService {
 
     boolean deleteOrders(Long idOrders);
 
-   // Orders updateOrders(Long orderId, Orders updatedOrders,Long idDriver,int isS,int isA);
+    Orders updateOrders(Long orderId, Orders updatedOrders,Long idDriver,int isS,int isA);
 
     void completedOrders(Long idOrders);
 }

@@ -5,7 +5,6 @@ import com.pgsintl.supplychaintracking.Entities.Account;
 import com.pgsintl.supplychaintracking.Entities.AuthRequest;
 import com.pgsintl.supplychaintracking.Services.AccountIService;
 import com.pgsintl.supplychaintracking.Services.AccountSecurityService;
-import jakarta.mail.MessagingException;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -130,7 +129,7 @@ public class AccountController {
 
     // *************************** RESET PASSWORD WITH TWILIO ****************************************
     @GetMapping("/resetpassword/SendCodeReset/{identity}")
-    public boolean sendCodeReset(@PathVariable String identity) throws MessagingException {
+    public boolean sendCodeReset(@PathVariable String identity) {
         return accountIService.sendCodeReset(identity);
     }
 

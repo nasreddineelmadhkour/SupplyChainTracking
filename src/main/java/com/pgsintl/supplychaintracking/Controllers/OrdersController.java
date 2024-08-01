@@ -74,11 +74,11 @@ public class OrdersController {
         ordersIService.completedOrders(idOrders);
     }
 
-/*
+
     @PostMapping("/updateOrders/{idOrder}/{idDriver}/{isS}/{isA}")
     @PreAuthorize("hasAuthority('CARRIER')")
     public Orders updateOrders(@RequestBody Orders orders,@PathVariable Long idOrder, @PathVariable Long idDriver ,@PathVariable int isS , @PathVariable int isA) {
         return ordersIService.updateOrders(idOrder,orders,idDriver,isS,isA);
-    }*/
+    }
 
 }
