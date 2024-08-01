@@ -10,12 +10,8 @@ public interface OrdersIService {
 
     List<Orders> getAllOrders();
 
-    List<Orders> getAllOrderByDriver(Long idDriver);
-
     List<Orders> getAllOrderByCarrier(Long idCarrier);
 
-
-    List<Orders> getOrderByCarrier(Long idCarrier);
     List<Orders> getOrdersTodayBycarrier(Long idCarrier);
 
     List<Orders> getOrdersByDriver(Long idDriver);
@@ -28,7 +24,7 @@ public interface OrdersIService {
 
     boolean deleteOrders(Long idOrders);
 
-    Orders updateOrders(Long orderId, Orders updatedOrders,Long idDriver,int isS,int isA);
+    Orders updateOrders(Long orderId, Orders updatedOrders);
 
     void completedOrders(Long idOrders);
 }
