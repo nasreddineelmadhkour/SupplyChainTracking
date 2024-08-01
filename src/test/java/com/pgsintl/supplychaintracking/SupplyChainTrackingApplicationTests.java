@@ -77,7 +77,27 @@ class SupplyChainTrackingApplicationTests {
         assertNotNull(savedAccount.getDatecreation());
         verify(accountRepository, times(1)).save(account);
     }
+@Test
+void testSendCodeReset_Success() {
+    // Arrange
+    String phoneNumber = "1234567890";
+    Account account = new Account();
+    account.setPhoneNumber(phoneNumber);
 
+    // Mock accountRepository behavior
+    when(accountRepository.findByPhoneNumber(phoneNumber)).thenReturn(Optional.of(account));
+    
+    // Mock save method
+    when(accountRepository.save(any(Account.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+    // Act
+    boolean result = accountService.sendCodeReset(phoneNumber);
+
+    // Assert
+    assertTrue(result);
+    assertNotNull(account.getCodeTel());
+    verify(accountRepository, times(1)).save(account);
+}
     @Test
     void testCreateAccountDriver() throws IOException {
         Account driver = new Account();
