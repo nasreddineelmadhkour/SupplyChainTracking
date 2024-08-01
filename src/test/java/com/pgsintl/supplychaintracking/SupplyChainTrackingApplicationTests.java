@@ -908,4 +908,34 @@ void testSendCodeReset_Success() {
         assertTrue(result.isEmpty());
         verify(ordersRepository, times(1)).findByReclamationIsNotNullAndCarrierUserNumber(idCarrier);
     }
+
+        @Test
+    void testDeleteDriver_Success() {
+        // Arrange
+        Long idDriver = 1L;
+        doNothing().when(accountRepository).deleteById(idDriver);
+
+        // Act
+        boolean result = accountService.deleteDriver(idDriver);
+
+        // Assert
+        assertTrue(result);
+        verify(accountRepository, times(1)).deleteById(idDriver);
+    }
+
+    @Test
+    void testDeleteDriver_Failure() {
+        // Arrange
+        Long idDriver = 1L;
+        RuntimeException exception = new RuntimeException("Deletion error");
+        doThrow(exception).when(accountRepository).deleteById(idDriver);
+
+        // Act
+        boolean result = accountService.deleteDriver(idDriver);
+
+        // Assert
+        assertFalse(result);
+        verify(accountRepository, times(1)).deleteById(idDriver);
+
+    }
 }
